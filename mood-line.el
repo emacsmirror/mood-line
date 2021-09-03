@@ -291,7 +291,11 @@
 (defun mood-line-segment-flymake ()
   "Displays information about the current status of flymake in the mode-line (if available)."
   (when (and (boundp 'flymake-mode) flymake-mode)
-    (concat (mood-line--string-trim (format-mode-line flymake--mode-line-format)) "  ")))
+    ;; Depending on Emacs version, flymake stores the mode-line segment using one of two variable names
+    (let ((flymake-segment-format (if (boundp 'flymake-mode-line-format)
+                                      flymake-mode-line-format
+                                    flymake--mode-line-format)))
+      (concat (mood-line--string-trim (format-mode-line flymake-segment-format)) "  "))))
 
 (defun mood-line-segment-process ()
   "Displays the current value of `mode-line-process' in the mode-line."
