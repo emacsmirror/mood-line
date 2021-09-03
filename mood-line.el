@@ -158,7 +158,7 @@
     (concat left
             " "
             (propertize " "
-                        'display `((space :align-to (- right ,reserve))))
+                        'display `((space :align-to (- right (- 0 right-margin) ,reserve))))
             right)))
 
 ;;
