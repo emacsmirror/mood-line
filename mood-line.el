@@ -49,6 +49,7 @@
 
 (defvar flycheck-current-errors)
 (defvar flymake--mode-line-format)
+(defvar anzu-cons-mode-line-p)
 (defvar anzu--state)
 (defvar anzu--cached-count)
 (defvar anzu--overflow-p)
@@ -302,8 +303,8 @@
 ;; Activation function
 ;;
 
-;; Store the default mode-line format
 (defvar-local mood-line--default-mode-line mode-line-format)
+(defvar-local mood-line--anzu-cons-mode-line-p nil)
 
 ;;;###autoload
 (define-minor-mode mood-line-mode
@@ -322,6 +323,11 @@
         (add-hook 'find-file-hook #'mood-line--update-vc-segment)
         (add-hook 'after-save-hook #'mood-line--update-vc-segment)
         (advice-add #'vc-refresh-state :after #'mood-line--update-vc-segment)
+
+        ;; Disable anzu's mode-line segment setting, saving the previous setting to be restored later (if present)
+        (when (boundp 'anzu-cons-mode-line-p)
+          (setq mood-line--anzu-cons-mode-line-p anzu-cons-mode-line-p))
+        (setq-default anzu-cons-mode-line-p nil)
 
         ;; Save previous mode-line-format to be restored later
         (setq mood-line--default-mode-line mode-line-format)
@@ -360,6 +366,9 @@
       (remove-hook 'file-find-hook #'mood-line--update-vc-segment)
       (remove-hook 'after-save-hook #'mood-line--update-vc-segment)
       (advice-remove #'vc-refresh-state #'mood-line--update-vc-segment)
+
+      ;; Restore anzu's mode-line segment setting
+      (setq-default anzu-cons-mode-line-p mood-line--anzu-cons-mode-line-p)
 
       ;; Restore the original mode-line format
       (setq-default mode-line-format mood-line--default-mode-line))))
