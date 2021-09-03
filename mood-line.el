@@ -303,7 +303,7 @@
 ;;
 
 ;; Store the default mode-line format
-(defvar mood-line--default-mode-line mode-line-format)
+(defvar-local mood-line--default-mode-line mode-line-format)
 
 ;;;###autoload
 (define-minor-mode mood-line-mode
@@ -322,6 +322,9 @@
         (add-hook 'find-file-hook #'mood-line--update-vc-segment)
         (add-hook 'after-save-hook #'mood-line--update-vc-segment)
         (advice-add #'vc-refresh-state :after #'mood-line--update-vc-segment)
+
+        ;; Save previous mode-line-format to be restored later
+        (setq mood-line--default-mode-line mode-line-format)
 
         ;; Set the new mode-line-format
         (setq-default mode-line-format
