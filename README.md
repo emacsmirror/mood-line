@@ -1,5 +1,5 @@
 # mood-line
-### Version 1.2.4
+### Version 1.2.5
 
 [![MELPA](https://melpa.org/packages/mood-line-badge.svg)](https://melpa.org/#/mood-line)
 [![MELPA Stable](https://stable.melpa.org/packages/mood-line-badge.svg)](https://stable.melpa.org/#/mood-line)
