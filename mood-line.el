@@ -98,27 +98,27 @@
   :group 'mood-line)
 
 (defface mood-line-status-neutral
-  '((t (:inherit (shadow))))
+  '((t (:inherit (shadow) :weight normal)))
   "Face used for neutral or inactive status indicators in the mode-line."
   :group 'mood-line)
 
 (defface mood-line-status-info
-  '((t (:inherit (font-lock-keyword-face))))
+  '((t (:inherit (font-lock-keyword-face) :weight normal)))
   "Face used for generic status indicators in the mode-line."
   :group 'mood-line)
 
 (defface mood-line-status-success
-  '((t (:inherit (success))))
+  '((t (:inherit (success) :weight normal)))
   "Face used for success status indicators in the mode-line."
   :group 'mood-line)
 
 (defface mood-line-status-warning
-  '((t (:inherit (warning))))
+  '((t (:inherit (warning) :weight normal)))
   "Face for warning status indicators in the mode-line."
   :group 'mood-line)
 
 (defface mood-line-status-error
-  '((t (:inherit (error))))
+  '((t (:inherit (error) :weight normal)))
   "Face for error stauts indicators in the mode-line."
   :group 'mood-line)
 
@@ -128,7 +128,7 @@
   :group 'mood-line)
 
 (defface mood-line-modified
-  '((t (:inherit (error))))
+  '((t (:inherit (error) :weight normal)))
   "Face used for the 'modified' indicator symbol in the mode-line."
   :group 'mood-line)
 
