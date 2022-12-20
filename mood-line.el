@@ -98,27 +98,27 @@
   :group 'mood-line)
 
 (defface mood-line-status-neutral
-  '((t (:inherit (shadow))))
+  '((t (:inherit (shadow) :weight normal)))
   "Face used for neutral or inactive status indicators."
   :group 'mood-line)
 
 (defface mood-line-status-info
-  '((t (:inherit (font-lock-keyword-face))))
+  '((t (:inherit (font-lock-keyword-face) :weight normal)))
   "Face used for generic status indicators."
   :group 'mood-line)
 
 (defface mood-line-status-success
-  '((t (:inherit (success))))
+  '((t (:inherit (success) :weight normal)))
   "Face used for success status indicators."
   :group 'mood-line)
 
 (defface mood-line-status-warning
-  '((t (:inherit (warning))))
+  '((t (:inherit (warning) :weight normal)))
   "Face for warning status indicators."
   :group 'mood-line)
 
 (defface mood-line-status-error
-  '((t (:inherit (error))))
+  '((t (:inherit (error) :weight normal)))
   "Face for error status indicators."
   :group 'mood-line)
 
@@ -128,7 +128,7 @@
   :group 'mood-line)
 
 (defface mood-line-modified
-  '((t (:inherit (error))))
+  '((t (:inherit (error) :weight normal)))
   "Face used for the 'modified' indicator symbol."
   :group 'mood-line)
 
@@ -235,17 +235,16 @@ The modeline should fit the `window-width' with space between the lists."
   "Display color-coded anzu status information."
   (when (and (boundp 'anzu--state) anzu--state)
     (cond ((eq anzu--state 'replace-query)
-           (format #("Replace: %d  " 0 11 (face mood-line-status-warning)) anzu--cached-count))
+           (format #("Replace×%d  " 7 10 (face mood-line-status-info)) anzu--cached-count))
           (anzu--overflow-p
-           (format #("%d/%d+  " 0 3 (face mood-line-status-info) 3 6 (face mood-line-status-error)) anzu--current-position anzu--total-matched))
+           (format #("%d/%d+  " 0 2 (face mood-line-status-info) 3 6 (face mood-line-status-error)) anzu--current-position anzu--total-matched))
           (t
-           (format #("%d/%d  " 0 5 (face mood-line-status-info)) anzu--current-position anzu--total-matched)))))
+           (format #("%d/%d  " 0 2 (face mood-line-status-info)) anzu--current-position anzu--total-matched)))))
 
 (defun mood-line-segment-multiple-cursors ()
   "Display the number of active multiple-cursors."
   (when (and (boundp 'multiple-cursors-mode) multiple-cursors-mode)
-    (concat "MC"
-            (format #("×%d  " 0 3 (face mood-line-status-warning)) (mc/num-cursors)))))
+    (format #("MC×%d  " 2 5 (face mood-line-status-info)) (mc/num-cursors))))
 
 (defun mood-line-segment-position ()
   "Display the current cursor position."
