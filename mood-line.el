@@ -78,12 +78,12 @@
   :type 'boolean)
 
 (defcustom mood-line-show-encoding-information nil
-  "If t, the encoding format of the current buffer will be displayed in the mode-line."
+  "If t, display encoding format of the active buffer in the mode-line."
   :group 'mood-line
   :type 'boolean)
 
 (defcustom mood-line-show-cursor-point nil
-  "If t, the value of `point' will be displayed next to the cursor position in the mode-line."
+  "If t, display value of `point' next to cursor position in the mode-line."
   :group 'mood-line
   :type 'boolean)
 
@@ -153,7 +153,7 @@
   (mood-line--string-trim-left (mood-line--string-trim-right string)))
 
 (defun mood-line--format (left right)
-  "Return a string of `window-width' length containing LEFT and RIGHT, aligned respectively."
+  "Return string of `window-width' length with contents LEFT and RIGHT aligned."
   (let ((reserve (length right)))
     (concat left
             " "
@@ -288,7 +288,7 @@
   mood-line--flycheck-text)
 
 (defun mood-line-segment-flymake ()
-  "Displays information about the current status of flymake in the mode-line (if available)."
+  "Display the current status of flymake in the mode-line (if available)."
   (when (and (boundp 'flymake-mode) flymake-mode)
     ;; Depending on Emacs version, flymake stores the mode-line segment using one of two variable names
     (let ((flymake-segment-format (if (boundp 'flymake-mode-line-format)
