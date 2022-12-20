@@ -73,53 +73,53 @@
   :group 'mode-line)
 
 (defcustom mood-line-show-eol-style nil
-  "If t, the EOL style of the current buffer will be displayed in the mode-line."
+  "When non-nil, show the EOL style of the current buffer."
   :group 'mood-line
   :type 'boolean)
 
 (defcustom mood-line-show-encoding-information nil
-  "If t, display encoding format of the active buffer in the mode-line."
+  "When non-nil, show the encoding format of the current buffer."
   :group 'mood-line
   :type 'boolean)
 
 (defcustom mood-line-show-cursor-point nil
-  "If t, display value of `point' next to cursor position in the mode-line."
+  "When non-nil, show the `point' value as an integer."
   :group 'mood-line
   :type 'boolean)
 
 (defface mood-line-buffer-name
   '((t (:inherit (mode-line-buffer-id))))
-  "Face used for major mode indicator in the mode-line."
+  "Face used for the `buffer-name'."
   :group 'mood-line)
 
 (defface mood-line-major-mode
   '((t (:inherit (bold))))
-  "Face used for major mode indicator in the mode-line."
+  "Face used for the major mode indicator."
   :group 'mood-line)
 
 (defface mood-line-status-neutral
   '((t (:inherit (shadow) :weight normal)))
-  "Face used for neutral or inactive status indicators in the mode-line."
+  "Face used for neutral or inactive status indicators."
   :group 'mood-line)
 
 (defface mood-line-status-info
   '((t (:inherit (font-lock-keyword-face) :weight normal)))
-  "Face used for generic status indicators in the mode-line."
+  "Face used for generic status indicators."
   :group 'mood-line)
 
 (defface mood-line-status-success
   '((t (:inherit (success) :weight normal)))
-  "Face used for success status indicators in the mode-line."
+  "Face used for success status indicators."
   :group 'mood-line)
 
 (defface mood-line-status-warning
   '((t (:inherit (warning) :weight normal)))
-  "Face for warning status indicators in the mode-line."
+  "Face for warning status indicators."
   :group 'mood-line)
 
 (defface mood-line-status-error
   '((t (:inherit (error) :weight normal)))
-  "Face for error stauts indicators in the mode-line."
+  "Face for error status indicators."
   :group 'mood-line)
 
 (defface mood-line-unimportant
@@ -129,7 +129,7 @@
 
 (defface mood-line-modified
   '((t (:inherit (error) :weight normal)))
-  "Face used for the 'modified' indicator symbol in the mode-line."
+  "Face used for the 'modified' indicator symbol."
   :group 'mood-line)
 
 ;;
@@ -153,14 +153,14 @@
   (mood-line--string-trim-left (mood-line--string-trim-right string)))
 
 (defun mood-line--format (left right)
-  "Return string of `window-width' length with contents LEFT and RIGHT aligned."
+  "Format a mode-line with a `LEFT' and `RIGHT' justified list of elements.
+The modeline should fit the `window-width' with space between the lists."
   (let ((reserve (length right)))
     (concat left
             " "
             (propertize " "
                         'display `((space :align-to (- right (- 0 right-margin) ,reserve))))
             right)))
-
 ;;
 ;; Update functions
 ;;
@@ -218,7 +218,7 @@
 ;;
 
 (defun mood-line-segment-modified ()
-  "Displays a color-coded buffer modification/read-only indicator in the mode-line."
+  "Display an indicator for buffer modification status."
   (if (not (string-match-p "\\*.*\\*" (buffer-name)))
       (if (buffer-modified-p)
           (propertize "● " 'face 'mood-line-modified)
@@ -228,11 +228,11 @@
     "  "))
 
 (defun mood-line-segment-buffer-name ()
-  "Displays the name of the current buffer in the mode-line."
+  "Display the name of the current buffer."
   (propertize "%b  " 'face 'mood-line-buffer-name))
 
 (defun mood-line-segment-anzu ()
-  "Displays color-coded anzu status information in the mode-line (if available)."
+  "Display color-coded anzu status information."
   (when (and (boundp 'anzu--state) anzu--state)
     (cond ((eq anzu--state 'replace-query)
            (format #("Replace×%d  " 7 10 (face mood-line-status-info)) anzu--cached-count))
@@ -242,18 +242,18 @@
            (format #("%d/%d  " 0 2 (face mood-line-status-info)) anzu--current-position anzu--total-matched)))))
 
 (defun mood-line-segment-multiple-cursors ()
-  "Displays the number of active multiple-cursors in the mode-line (if available)."
+  "Display the number of active multiple-cursors."
   (when (and (boundp 'multiple-cursors-mode) multiple-cursors-mode)
     (format #("MC×%d  " 2 5 (face mood-line-status-info)) (mc/num-cursors))))
 
 (defun mood-line-segment-position ()
-  "Displays the current cursor position in the mode-line."
+  "Display the current cursor position."
   (concat "%l:%c"
           (when mood-line-show-cursor-point (propertize (format ":%d" (point)) 'face 'mood-line-unimportant))
           (propertize " %p%%  " 'face 'mood-line-unimportant)))
 
 (defun mood-line-segment-eol ()
-  "Displays the EOL style of the current buffer in the mode-line."
+  "Display the EOL style of the current buffer."
   (when mood-line-show-eol-style
     (pcase (coding-system-eol-type buffer-file-coding-system)
       (0 "LF  ")
@@ -261,7 +261,7 @@
       (2 "CR  "))))
 
 (defun mood-line-segment-encoding ()
-  "Displays the encoding and EOL style of the buffer in the mode-line."
+  "Display the encoding and EOL style of the buffer."
   (when mood-line-show-encoding-information
     (concat (let ((sys (coding-system-plist buffer-file-coding-system)))
               (cond ((memq (plist-get sys :category) '(coding-category-undecided coding-category-utf-8))
@@ -270,34 +270,35 @@
             "  ")))
 
 (defun mood-line-segment-vc ()
-  "Displays color-coded version control information in the mode-line."
+  "Display color-coded version control information."
   mood-line--vc-text)
 
 (defun mood-line-segment-major-mode ()
-  "Displays the current major mode in the mode-line."
+  "Display the current major mode."
   (concat (format-mode-line mode-name 'mood-line-major-mode) "  "))
 
 (defun mood-line-segment-misc-info ()
-  "Displays the current value of `mode-line-misc-info' in the mode-line."
+  "Display the current value of `mode-line-misc-info'."
   (let ((misc-info (format-mode-line mode-line-misc-info 'mood-line-unimportant)))
     (unless (string= (mood-line--string-trim misc-info) "")
       (concat (mood-line--string-trim misc-info) "  "))))
 
 (defun mood-line-segment-flycheck ()
-  "Displays color-coded flycheck information in the mode-line (if available)."
+  "Display color-coded flycheck information."
   mood-line--flycheck-text)
 
 (defun mood-line-segment-flymake ()
-  "Display the current status of flymake in the mode-line (if available)."
+  "Display information about the current status of flymake."
   (when (and (boundp 'flymake-mode) flymake-mode)
-    ;; Depending on Emacs version, flymake stores the mode-line segment using one of two variable names
+    ;; Depending on Emacs version, flymake stores the mode-line segment
+    ;; using one of two variable names
     (let ((flymake-segment-format (if (boundp 'flymake-mode-line-format)
                                       flymake-mode-line-format
                                     flymake--mode-line-format)))
       (concat (mood-line--string-trim (format-mode-line flymake-segment-format)) "  "))))
 
 (defun mood-line-segment-process ()
-  "Displays the current value of `mode-line-process' in the mode-line."
+  "Display the current value of `mode-line-process'."
   (let ((process-info (format-mode-line mode-line-process)))
     (unless (string= (mood-line--string-trim process-info) "")
       (concat (mood-line--string-trim process-info) "  "))))
@@ -327,7 +328,8 @@
         (add-hook 'after-save-hook #'mood-line--update-vc-segment)
         (advice-add #'vc-refresh-state :after #'mood-line--update-vc-segment)
 
-        ;; Disable anzu's mode-line segment setting, saving the previous setting to be restored later (if present)
+        ;; Disable anzu's mode-line segment setting, saving the previous
+        ;; setting to be restored later (if present)
         (when (boundp 'anzu-cons-mode-line-p)
           (setq mood-line--anzu-cons-mode-line-p anzu-cons-mode-line-p))
         (setq-default anzu-cons-mode-line-p nil)
