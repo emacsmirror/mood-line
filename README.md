@@ -38,9 +38,7 @@ To enable `mood-line`, place this in your configuration file after loading the p
 
 Disabling `mood-line` can be accomplished by toggling `mood-line-mode` off.
 
-## Known Issues
-
-* No known issues.
+## Feedback
 
 If you experience any issues with this package, please
 [open an issue](https://gitlab.com/jessieh/mood-line/issues/new)
