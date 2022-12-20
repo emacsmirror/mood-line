@@ -87,6 +87,38 @@
   :group 'mood-line
   :type 'boolean)
 
+(defcustom mood-line-evil-state-alist
+  '((normal . ("<N>" . font-lock-variable-name-face))
+    (insert . ("<I>" . font-lock-string-face))
+    (visual . ("<V>" . font-lock-keyword-face))
+    (replace . ("<R>" . font-lock-type-face))
+    (motion . ("<M>" . font-lock-constant-face))
+    (operator . ("<O>" . font-lock-function-name-face))
+    (emacs . ("<E>" . font-lock-builtin-face)))
+  "Set the string and corresponding face for any `evil-mode' state.
+The `Face' may be either a face symbol or a property list of key-value pairs
+ e.g. (:foreground \"red\")."
+  :group 'mood-line
+  :type '(alist
+          :key-type symbol
+          :value-type
+          (cons (string :tag "Display Text") (choice :tag "Face" face plist))))
+
+(defcustom mood-line-meow-state-alist
+  '((normal . ("<N>" . font-lock-variable-name-face))
+    (insert . ("<I>" . font-lock-string-face))
+    (keypad . ("<K>" . font-lock-keyword-face))
+    (beacon . ("<B>" . font-lock-type-face))
+    (motion . ("<M>" . font-lock-constant-face)))
+  "Set the string and corresponding face for any `meow-mode' state.
+The `Face' may be either a face symbol or a property list of key-value pairs
+ e.g. (:foreground \"red\")."
+  :group 'mood-line
+  :type '(alist
+          :key-type symbol
+          :value-type
+          (cons (string :tag "Display Text") (choice :tag "Face" face plist))))
+
 (defface mood-line-buffer-name
   '((t (:inherit (mode-line-buffer-id))))
   "Face used for major mode indicator in the mode-line."
@@ -303,6 +335,33 @@
     (unless (string= (mood-line--string-trim process-info) "")
       (concat (mood-line--string-trim process-info) "  "))))
 
+(defun mood-line-segment-evil ()
+  "Display the current evil-mode state."
+  (when (boundp 'evil-state)
+    (let ((mode-cons (alist-get evil-state mood-line-evil-state-alist)))
+      (concat (propertize (car mode-cons) 'face (cdr mode-cons)) " "))))
+
+(defun mood-line-segment-meow ()
+  "Display the current meow-mode state."
+  (when (boundp 'meow--current-state)
+    (let ((mode-cons (alist-get
+                      meow--current-state
+                      mood-line-meow-state-alist)))
+      (concat (propertize (car mode-cons) 'face (cdr mode-cons)) " "))))
+
+(defun mood-line-segment-god ()
+  "Indicate whether or not god-mode is active."
+  (if (bound-and-true-p god-local-mode)
+      '(:propertize "<G> "
+                    face (:inherit mood-line-status-warning))
+    "--- "))
+
+(defun mood-line-segment-modal ()
+  "Call the correct mode-line segment when the first modal-mode is found."
+  (cond ((bound-and-true-p evil-mode) (mood-line-segment-evil))
+        ((bound-and-true-p meow-mode) (mood-line-segment-meow))
+        ((featurep 'god-mode) (mood-line-segment-god))))
+
 ;;
 ;; Activation function
 ;;
@@ -343,6 +402,7 @@
                           ;; Left
                           (format-mode-line
                            '(" "
+                             (:eval (mood-line-segment-modal))
                              (:eval (mood-line-segment-modified))
                              (:eval (mood-line-segment-buffer-name))
                              (:eval (mood-line-segment-anzu))
