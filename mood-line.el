@@ -214,6 +214,7 @@ glyph.  Glyphs used by mood-line include:
 `:vc-conflict'         | VC backend reports conflict
 `:vc-good'             | VC backend has nothing to report
 
+`:buffer-narrowed'     | File-backed buffer is narrowed
 `:buffer-modified'     | File-backed buffer is modified
 `:buffer-read-only'    | File-backed buffer is read-only
 
