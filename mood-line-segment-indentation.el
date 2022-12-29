@@ -31,6 +31,18 @@
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
+;; Byte-compiler declarations
+;;
+;; -------------------------------------------------------------------------- ;;
+
+;; ---------------------------------- ;;
+;; External function decls
+;; ---------------------------------- ;;
+
+(declare-function mood-line--get-glyph "mood-line" (glyph))
+
+;; -------------------------------------------------------------------------- ;;
+;;
 ;; Custom definitions
 ;;
 ;; -------------------------------------------------------------------------- ;;
@@ -38,6 +50,20 @@
 ;; ---------------------------------- ;;
 ;; Variable definitions
 ;; ---------------------------------- ;;
+
+(defcustom mood-line-segment-indentation-always-show-offset nil
+  "When non-nil, always show the indentation offset of the current mode.
+
+Default behavior of the indentation segment is to display the indentation offset
+of the current mode when `indent-tabs-mode' is non-nil and an offset value can
+be found for the current mode.  Otherwise, `tab-wdith' will be shown.
+
+When `mood-line-segment-indentation-always-show-offset' is set to non-nil, the
+indentation offset will always be shown alongside `tab-width'.  If an offset
+value cannot be found for the current mode, a \"?\" character will be displayed
+alongside `tab-width'."
+  :group 'mood-line
+  :type 'boolean)
 
 ;; Assembled from `editorconfig-indentation-alist' and `doom-modeline-indent-alist':
 ;; https://github.com/editorconfig/editorconfig-emacs/blob/b8043702f3d977db0e030c6c64ee4a810cad5f45/editorconfig.el#L175
@@ -164,23 +190,21 @@ order provided)."
 
 (defun mood-line-segment-indentation--segment ()
   "Display the indentation style of the current buffer."
-  (format "%s %s %d  "
-          (if indent-tabs-mode "TAB" "SPC")
-          (let ((lookup-var
-                 (seq-find (lambda (var) (and var (boundp var)))
-                           (cdr (assoc major-mode
-                                       mood-line-segment-indentation-mode-offset-alist))
-                           nil)))
-            ;; If we don't know the indent offset variable of this major mode,
-            ;; display a "-".
-            (if lookup-var
-                ;; Some major modes, for example lisp-mode, works better when
-                ;; lisp-indent-offset is nil, we use "-" for nil, too.
-                (if (not (null (symbol-value lookup-var)))
-                    (format "%d" (symbol-value lookup-var))
-                  "-")
-              "-"))
-          tab-width))
+  (let* ((mode-offset (symbol-value
+                       (seq-some #'identity
+                                 (cdr (assoc major-mode
+                                             mood-line-segment-indentation-mode-offset-alist))))))
+    (propertize (concat (if indent-tabs-mode "TAB" "SPC")
+                        (mood-line--get-glyph :count-separator)
+                        (if mood-line-segment-indentation-always-show-offset
+                            (format "%s:%d"
+                                    (or mode-offset "?")
+                                    tab-width)
+                          (number-to-string (if indent-tabs-mode
+                                                tab-width
+                                              (or mode-offset tab-width))))
+                        "  ")
+                'face 'mood-line-unimportant)))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
