@@ -3,7 +3,7 @@
 ;; Author: Jessie Hildebrandt <jessieh.net>
 ;; Homepage: https://gitlab.com/jessieh/mood-line
 ;; Keywords: mode-line faces
-;; Version: 2.0.0
+;; Version: 2.1.0
 ;; Package-Requires: ((emacs "25.1"))
 
 ;; This file is not part of GNU Emacs.
@@ -48,6 +48,13 @@
 ;; Byte-compiler declarations
 ;;
 ;; -------------------------------------------------------------------------- ;;
+
+;; ---------------------------------- ;;
+;; Compile time requirements
+;; ---------------------------------- ;;
+
+(eval-when-compile
+  (require 'flymake))
 
 ;; ---------------------------------- ;;
 ;; External variable defs
@@ -269,7 +276,7 @@ The `Face' may be either a face symbol or a property list of key-value pairs
   :group 'mood-line-faces)
 
 (defface mood-line-buffer-status-modified
-  '((t (:inherit (mood-line-modified) :weight normal)))
+  '((t (:inherit (error) :weight normal)))
   "Face used for the ':buffer-modified' buffer status indicator."
   :group 'mood-line-faces)
 
@@ -319,15 +326,10 @@ The `Face' may be either a face symbol or a property list of key-value pairs
   :group 'mood-line-faces)
 
 ;; ---------------------------------- ;;
-;; Deprecated faces
+;; Obsolete faces
 ;; ---------------------------------- ;;
 
-(defface mood-line-modified
-  '((t (:inherit (error) :weight normal)))
-  "Face used for the ':buffer-modified' indicator.  (DEPRECATED)
-
-DEPRECATED: You should customize `mood-line-buffer-status-modified' instead."
-  :group 'mood-line-faces)
+(define-obsolete-face-alias 'mood-line-modified 'mood-line-buffer-status-modified "2.1.0")
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
