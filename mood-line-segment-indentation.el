@@ -8,6 +8,7 @@
 
 ;;; Commentary:
 ;;
+;; This segment displays indentation style information for the current buffer.
 
 ;;; License:
 ;;
