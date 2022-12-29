@@ -715,7 +715,7 @@ Checkers checked, in order: `flycheck', `flymake'."
 
 (defun mood-line-segment-buffer-status ()
   "Return an indicator representing the status of the current buffer."
-  (concat (if (buffer-file-name)
+  (concat (if (buffer-file-name (buffer-base-buffer))
               (cond
                ((and (buffer-narrowed-p)
                      (buffer-modified-p))
