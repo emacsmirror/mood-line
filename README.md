@@ -5,7 +5,7 @@
 
 ## About
 
-mood-line is a minimal mode-line configuration that aims to replicate some of the features of the
+mood-line is a minimal mode line configuration that aims to replicate some of the features of the
 more advanced [doom-modeline](https://github.com/seagle0128/doom-modeline) package.
 
 ## Features
