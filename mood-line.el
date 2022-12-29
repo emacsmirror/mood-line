@@ -728,7 +728,7 @@ Checkers checked, in order: `flycheck', `flymake'."
 ;; ---------------------------------- ;;
 
 (defun mood-line-segment-cursor-position ()
-  "Display the current cursor position."
+  "Display the position of the cursor in the current buffer."
   (concat "%l:%c"
           (when mood-line-show-cursor-point
             (propertize (format ":%d" (point))
