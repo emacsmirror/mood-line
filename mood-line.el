@@ -71,6 +71,8 @@
 (declare-function flymake-running-backends "flymake" ())
 (declare-function flymake-reporting-backends "flymake" ())
 
+(declare-function mood-line-segment-indentation--segment "mood-line-segment-indentation" ())
+
 (declare-function mc/num-cursors "multiple-cursors" ())
 
 (declare-function string-blank-p "subr-x" (string))
@@ -169,122 +171,10 @@
 ;; Variable definitions
 ;; ---------------------------------- ;;
 
-(defcustom mood-line-show-indentation-information nil
-  "When non-nil, show the indentation information of the current buffer."
+(defcustom mood-line-show-indentation-style nil
+  "When non-nil, show the indentation style of the current buffer."
   :group 'mood-line
   :type 'boolean)
-
-;; Based on `editorconfig-indentation-alist' and `doom-modeline-indent-alist'.
-;; See <https://github.com/editorconfig/editorconfig-emacs/blob/master/editorconfig.el#L175>.
-;; See <https://github.com/seagle0128/doom-modeline/blob/master/doom-modeline-core.el#L282>.
-(defcustom mood-line-indent-alist
-  '((apache-mode apache-indent-level)
-    (awk-mode c-basic-offset)
-    (bpftrace-mode c-basic-offset)
-    (c++-mode c-basic-offset)
-    (c-mode c-basic-offset)
-    (cmake-mode cmake-tab-width)
-    (coffee-mode coffee-tab-width)
-    (cperl-mode cperl-indent-level)
-    (crystal-mode crystal-indent-level)
-    (csharp-mode c-basic-offset)
-    (css-mode css-indent-offset)
-    (d-mode c-basic-offset)
-    (emacs-lisp-mode lisp-indent-offset)
-    (enh-ruby-mode enh-ruby-indent-level)
-    (erlang-mode erlang-indent-level)
-    (ess-mode ess-indent-offset)
-    (f90-mode f90-associate-indent
-              f90-continuation-indent
-              f90-critical-indent
-              f90-do-indent
-              f90-if-indent
-              f90-program-indent
-              f90-type-indent)
-    (feature-mode feature-indent-offset
-                  feature-indent-level)
-    (fsharp-mode fsharp-continuation-offset
-                 fsharp-indent-level
-                 fsharp-indent-offset)
-    (groovy-mode groovy-indent-offset)
-    (haskell-mode haskell-indent-spaces
-                  haskell-indent-offset
-                  haskell-indentation-layout-offset
-                  haskell-indentation-left-offset
-                  haskell-indentation-starter-offset
-                  haskell-indentation-where-post-offset
-                  haskell-indentation-where-pre-offset
-                  shm-indent-spaces)
-    (haxor-mode haxor-tab-width)
-    (idl-mode c-basic-offset)
-    (jade-mode jade-tab-width)
-    (java-mode c-basic-offset)
-    (js-mode js-indent-level)
-    (js-jsx-mode js-indent-level sgml-basic-offset)
-    (js2-mode js2-basic-offset)
-    (js2-jsx-mode js2-basic-offset sgml-basic-offset)
-    (js3-mode js3-indent-level)
-    (json-mode js-indent-level)
-    (json-ts-mode json-ts-mode-indent-offset)
-    (julia-mode julia-indent-offset)
-    (kotlin-mode kotlin-tab-width)
-    (latex-mode tex-indent-basic)
-    (lisp-mode lisp-indent-offset)
-    (livescript-mode livescript-tab-width)
-    (lua-mode lua-indent-level)
-    (matlab-mode matlab-indent-level)
-    (meson-mode meson-indent-basic)
-    (mips-mode mips-tab-width)
-    (mustache-mode mustache-basic-offset)
-    (nasm-mode nasm-basic-offset)
-    (nginx-mode nginx-indent-level)
-    (nxml-mode nxml-child-indent)
-    (objc-mode c-basic-offset)
-    (octave-mode octave-block-offset)
-    (perl-mode perl-indent-level)
-    (php-mode c-basic-offset)
-    (pike-mode c-basic-offset)
-    (ps-mode ps-mode-tab)
-    (pug-mode pug-tab-width)
-    (puppet-mode puppet-indent-level)
-    (python-mode python-indent-offset)
-    (rjsx-mode js-indent-level sgml-basic-offset)
-    (ruby-mode ruby-indent-level)
-    (rust-mode rust-indent-offset)
-    (rustic-mode rustic-indent-offset)
-    (scala-mode scala-indent:step)
-    (scss-mode css-indent-offset)
-    (sgml-mode sgml-basic-offset)
-    (sh-mode sh-basic-offset sh-indentation)
-    (slim-mode slim-indent-offset)
-    (sml-mode sml-indent-level)
-    (tcl-mode tcl-indent-level
-              tcl-continued-indent-level)
-    (terra-mode terra-indent-level)
-    (typescript-mode typescript-indent-level)
-    (typescript-ts-base-mode typescript-ts-mode-indent-offset)
-    (verilog-mode verilog-indent-level
-                  verilog-indent-level-behavioral
-                  verilog-indent-level-declaration
-                  verilog-indent-level-module
-                  verilog-cexp-indent
-                  verilog-case-indent)
-    (web-mode web-mode-attr-indent-offset
-              web-mode-attr-value-indent-offset
-              web-mode-code-indent-offset
-              web-mode-css-indent-offset
-              web-mode-markup-indent-offset
-              web-mode-sql-indent-offset
-              web-mode-block-padding
-              web-mode-script-padding
-              web-mode-style-padding)
-    (yaml-mode yaml-indent-offset))
-  "Indentation retrieving variables matched to major modes.
-Which is used when `mood-line-show-indentation-information' is non-nil.
-When multiple variables are specified for a mode, they will be tried resolved
-in the given order."
-  :group 'mood-line
-  :type '(alist :key-type symbol :value-type sexp))
 
 (defcustom mood-line-show-eol-style nil
   "When non-nil, show the EOL style of the current buffer."
@@ -527,6 +417,22 @@ Modal modes checked, in order: `evil-mode', `meow-mode', `god-mode'."
     (mood-line-segment-modal-meow))
    ((featurep 'god-mode)
     (mood-line-segment-modal-god))))
+
+;; -------------------------------------------------------------------------- ;;
+;;
+;; Optional segments
+;;
+;; -------------------------------------------------------------------------- ;;
+
+;; ---------------------------------- ;;
+;; Indentation style
+;; ---------------------------------- ;;
+
+(defun mood-line-segment-indentation ()
+  "Display the indentation style of the current buffer (if enabled)."
+  (when mood-line-show-indentation-style
+    (require 'mood-line-segment-indentation)
+    (mood-line-segment-indentation--segment)))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
@@ -854,30 +760,6 @@ Checkers checked, in order: `flycheck', `flymake'."
                       'face 'mood-line-unimportant)))
 
 ;; ---------------------------------- ;;
-;; Indentation segment
-;; ---------------------------------- ;;
-
-(defun mood-line-segment-indent ()
-  "Display the indentation information of the current buffer."
-  (when mood-line-show-indentation-information
-    (format "%s %s %d  "
-            (if indent-tabs-mode "TAB" "SPC")
-            (let ((lookup-var
-                   (seq-find (lambda (var) (and var (boundp var)))
-                             (cdr (assoc major-mode mood-line-indent-alist))
-                             nil)))
-              ;; If we don't know the indent offset variable of this major mode,
-              ;; display a "-".
-              (if lookup-var
-                  ;; Some major modes, for example lisp-mode, works better when
-                  ;; lisp-indent-offset is nil, we use "-" for nil, too.
-                  (if (not (null (symbol-value lookup-var)))
-                      (format "%d" (symbol-value lookup-var))
-                    "-")
-                "-"))
-            tab-width)))
-
-;; ---------------------------------- ;;
 ;; EOL segment
 ;; ---------------------------------- ;;
 
@@ -999,7 +881,7 @@ Checkers checked, in order: `flycheck', `flymake'."
 
                     ;; Right
                     (format-mode-line
-                     '((:eval (mood-line-segment-indent))
+                     '((:eval (mood-line-segment-indentation))
                        (:eval (mood-line-segment-eol))
                        (:eval (mood-line-segment-encoding))
                        (:eval (mood-line-segment-vc))
