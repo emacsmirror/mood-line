@@ -265,7 +265,22 @@ The `Face' may be either a face symbol or a property list of key-value pairs
 
 (defface mood-line-buffer-name
   '((t (:inherit (mode-line-buffer-id))))
-  "Face used for the `buffer-name'."
+  "Face used for displaying the value of `buffer-name'."
+  :group 'mood-line-faces)
+
+(defface mood-line-buffer-status-modified
+  '((t (:inherit (mood-line-modified) :weight normal)))
+  "Face used for the ':buffer-modified' buffer status indicator."
+  :group 'mood-line-faces)
+
+(defface mood-line-buffer-status-read-only
+  '((t (:inherit (shadow) :weight normal)))
+  "Face used for the ':buffer-read-only' buffer status indicator."
+  :group 'mood-line-faces)
+
+(defface mood-line-buffer-status-narrowed
+  '((t (:inherit (font-lock-doc-face) :weight normal)))
+  "Face used for the ':buffer-narrowed' buffer status indicator."
   :group 'mood-line-faces)
 
 (defface mood-line-major-mode
@@ -303,9 +318,15 @@ The `Face' may be either a face symbol or a property list of key-value pairs
   "Face used for less important mode line elements."
   :group 'mood-line-faces)
 
+;; ---------------------------------- ;;
+;; Deprecated faces
+;; ---------------------------------- ;;
+
 (defface mood-line-modified
   '((t (:inherit (error) :weight normal)))
-  "Face used for the ':buffer-modified' indicator."
+  "Face used for the ':buffer-modified' indicator.  (DEPRECATED)
+
+DEPRECATED: You should customize `mood-line-buffer-status-modified' instead."
   :group 'mood-line-faces)
 
 ;; -------------------------------------------------------------------------- ;;
@@ -693,26 +714,32 @@ Checkers checked, in order: `flycheck', `flymake'."
 ;; ---------------------------------- ;;
 
 (defun mood-line-segment-buffer-status ()
-  "Return an indicator for buffer status."
-  (if (buffer-file-name)
-      (concat (cond
-               ((and (buffer-modified-p)
-                     (buffer-narrowed-p))
+  "Return an indicator representing the status of the current buffer."
+  (concat (if (buffer-file-name)
+              (cond
+               ((and (buffer-narrowed-p)
+                     (buffer-modified-p))
                 (propertize (mood-line--get-glyph :buffer-narrowed)
-                            'face 'mood-line-modified))
+                            'face 'mood-line-buffer-status-modified))
+               ((and (buffer-narrowed-p)
+                     buffer-read-only)
+                (propertize (mood-line--get-glyph :buffer-narrowed)
+                            'face 'mood-line-buffer-status-read-only))
+               ((buffer-narrowed-p)
+                (propertize (mood-line--get-glyph :buffer-narrowed)
+                            'face 'mood-line-buffer-status-narrowed))
                ((buffer-modified-p)
                 (propertize (mood-line--get-glyph :buffer-modified)
-                            'face 'mood-line-modified))
-               ((or buffer-read-only
-                    (buffer-narrowed-p))
-                (propertize (mood-line--get-glyph :buffer-narrowed)
-                            'face 'mood-line-unimportant))
+                            'face 'mood-line-buffer-status-modified))
                (buffer-read-only
                 (propertize (mood-line--get-glyph :buffer-read-only)
-                            'face 'mood-line-unimportant))
+                            'face 'mood-line-buffer-status-read-only))
                (t " "))
-              " ")
-    "  "))
+            (if (buffer-narrowed-p)
+                (propertize (mood-line--get-glyph :buffer-narrowed)
+                            'face 'mood-line-buffer-status-narrowed)
+              " "))
+          " "))
 
 ;; ---------------------------------- ;;
 ;; Buffer name segment
