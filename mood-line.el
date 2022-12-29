@@ -305,6 +305,11 @@ The `Face' may be either a face symbol or a property list of key-value pairs
   "Face for error status indicators."
   :group 'mood-line-faces)
 
+(defface mood-line-encoding
+  '((t (:inherit (shadow) :weight normal)))
+  "Face used for buffer/file encoding information."
+  :group 'mood-line-faces)
+
 (defface mood-line-unimportant
   '((t (:inherit (shadow) :weight normal)))
   "Face used for less important mode line elements."

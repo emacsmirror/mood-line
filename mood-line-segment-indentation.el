@@ -204,7 +204,7 @@ order provided)."
                                                 tab-width
                                               (or mode-offset tab-width))))
                         "  ")
-                'face 'mood-line-unimportant)))
+                'face 'mood-line-encoding)))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
