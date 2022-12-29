@@ -741,8 +741,9 @@ Checkers checked, in order: `flycheck', `flymake'."
 ;; ---------------------------------- ;;
 
 (defun mood-line-segment-eol ()
-  "Display the EOL style of the current buffer."
-  (when mood-line-show-eol-style
+  "Display the EOL type for the coding system of the current buffer."
+  (when (and mood-line-show-eol-style
+             buffer-file-coding-system)
     (pcase (coding-system-eol-type buffer-file-coding-system)
       (0 "LF  ")
       (1 "CRLF  ")
@@ -753,15 +754,16 @@ Checkers checked, in order: `flycheck', `flymake'."
 ;; ---------------------------------- ;;
 
 (defun mood-line-segment-encoding ()
-  "Display the encoding and EOL style of the buffer."
-  (when mood-line-show-encoding-information
-    (concat (let ((sys (coding-system-plist buffer-file-coding-system)))
+  "Display the name of the coding system of the current buffer."
+  (when (and mood-line-show-encoding-information
+             buffer-file-coding-system)
+    (concat (let ((coding-system (coding-system-plist buffer-file-coding-system)))
               (cond
-               ((memq (plist-get sys :category)
+               ((memq (plist-get coding-system :category)
                       '(coding-category-undecided coding-category-utf-8))
                 "UTF-8")
                (t
-                (upcase (symbol-name (plist-get sys :name))))))
+                (upcase (symbol-name (plist-get coding-system :name))))))
             "  ")))
 
 ;; ---------------------------------- ;;
