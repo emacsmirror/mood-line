@@ -359,22 +359,6 @@ returned from `mood-line-glyphs-ascii'."
                       (alist-get glyph
                                  mood-line-glyphs-ascii))))
 
-(defun mood-line--string-trim-left (string)
-  "Remove whitespace at the beginning of STRING."
-  (if (string-match "\\`[ \t\n\r]+" string)
-      (replace-match "" t t string)
-    string))
-
-(defun mood-line--string-trim-right (string)
-  "Remove whitespace at the end of STRING."
-  (if (string-match "[ \t\n\r]+\\'" string)
-      (replace-match "" t t string)
-    string))
-
-(defun mood-line--string-trim (string)
-  "Remove whitespace at the beginning and end of STRING."
-  (mood-line--string-trim-left (mood-line--string-trim-right string)))
-
 (defun mood-line--format (left right)
   "Format a mode line with a `LEFT' and `RIGHT' justified list of elements.
 The mode line should fit the `window-width' with space between the lists."
@@ -841,7 +825,7 @@ Checkers checked, in order: `flycheck', `flymake'."
   "Display the current value of `mode-line-misc-info'."
   (let ((misc-info (format-mode-line mode-line-misc-info)))
     (unless (string-blank-p misc-info)
-      (concat (propertize (mood-line--string-trim misc-info)
+      (concat (propertize (string-trim misc-info)
                           'face 'mood-line-unimportant)
               "  "))))
 
@@ -853,7 +837,7 @@ Checkers checked, in order: `flycheck', `flymake'."
   "Display the current value of `mode-line-process'."
   (let ((process-info (format-mode-line mode-line-process)))
     (unless (string-blank-p process-info)
-      (concat (mood-line--string-trim process-info)
+      (concat (string-trim process-info)
               "  "))))
 
 ;; -------------------------------------------------------------------------- ;;
