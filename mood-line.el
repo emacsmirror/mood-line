@@ -127,7 +127,7 @@
     (:vc-conflict . ?x)
     (:vc-good . ?✓)
 
-    (:buffer-narrowed . ?▼)
+    (:buffer-narrowed . ?◢)
     (:buffer-modified . ?●)
     (:buffer-read-only . ?■)
 
