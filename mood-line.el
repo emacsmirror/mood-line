@@ -78,6 +78,8 @@
 (declare-function flymake-running-backends "flymake" ())
 (declare-function flymake-reporting-backends "flymake" ())
 
+(declare-function mood-line-segment-indentation--segment "mood-line-segment-indentation" ())
+
 (declare-function mc/num-cursors "multiple-cursors" ())
 
 (declare-function string-blank-p "subr-x" (string))
@@ -175,6 +177,11 @@
 ;; ---------------------------------- ;;
 ;; Variable definitions
 ;; ---------------------------------- ;;
+
+(defcustom mood-line-show-indentation-style nil
+  "When non-nil, show the indentation style of the current buffer."
+  :group 'mood-line
+  :type 'boolean)
 
 (defcustom mood-line-show-eol-style nil
   "When non-nil, show the EOL style of the current buffer."
@@ -320,6 +327,11 @@ The `Face' may be either a face symbol or a property list of key-value pairs
   "Face for error status indicators."
   :group 'mood-line-faces)
 
+(defface mood-line-encoding
+  '((t (:inherit (shadow) :weight normal)))
+  "Face used for buffer/file encoding information."
+  :group 'mood-line-faces)
+
 (defface mood-line-unimportant
   '((t (:inherit (shadow) :weight normal)))
   "Face used for less important mode line elements."
@@ -433,6 +445,22 @@ Modal modes checked, in order: `evil-mode', `meow-mode', `god-mode'."
     (mood-line-segment-modal-meow))
    ((featurep 'god-mode)
     (mood-line-segment-modal-god))))
+
+;; -------------------------------------------------------------------------- ;;
+;;
+;; Optional segments
+;;
+;; -------------------------------------------------------------------------- ;;
+
+;; ---------------------------------- ;;
+;; Indentation style
+;; ---------------------------------- ;;
+
+(defun mood-line-segment-indentation ()
+  "Display the indentation style of the current buffer (if enabled)."
+  (when mood-line-show-indentation-style
+    (require 'mood-line-segment-indentation)
+    (mood-line-segment-indentation--segment)))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
@@ -889,7 +917,8 @@ Checkers checked, in order: `flycheck', `flymake'."
 
                     ;; Right
                     (format-mode-line
-                     '((:eval (mood-line-segment-eol))
+                     '((:eval (mood-line-segment-indentation))
+                       (:eval (mood-line-segment-eol))
                        (:eval (mood-line-segment-encoding))
                        (:eval (mood-line-segment-vc))
                        (:eval (mood-line-segment-major-mode))
