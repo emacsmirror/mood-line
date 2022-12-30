@@ -198,6 +198,11 @@
   :group 'mood-line
   :type 'boolean)
 
+(defcustom mood-line-show-major-mode t
+  "When non-nil, show the name of the major mode of the current buffer."
+  :group 'mood-line
+  :type 'boolean)
+
 (defcustom mood-line-glyph-alist mood-line-glyphs-ascii
   "Alist mapping glyph names to characters used to draw some mode line segments.
 
@@ -812,10 +817,11 @@ Checkers checked, in order: `flycheck', `flymake'."
 ;; ---------------------------------- ;;
 
 (defun mood-line-segment-major-mode ()
-  "Display the name of the current major mode."
-  (concat (propertize (substring-no-properties (format-mode-line mode-name))
-                      'face 'mood-line-major-mode)
-          "  "))
+  "Display the name of the major mode of the current buffer."
+  (when mood-line-show-major-mode
+    (concat (propertize (substring-no-properties (format-mode-line mode-name))
+                        'face 'mood-line-major-mode)
+            "  ")))
 
 ;; ---------------------------------- ;;
 ;; Misc. info segment
