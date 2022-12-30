@@ -389,6 +389,22 @@ The mode line should fit the `window-width' with space between the lists."
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
+;; Optional segments
+;;
+;; -------------------------------------------------------------------------- ;;
+
+;; ---------------------------------- ;;
+;; Indentation style
+;; ---------------------------------- ;;
+
+(defun mood-line-segment-indentation ()
+  "Display the indentation style of the current buffer (if enabled)."
+  (when mood-line-show-indentation-style
+    (require 'mood-line-segment-indentation)
+    (mood-line-segment-indentation--segment)))
+
+;; -------------------------------------------------------------------------- ;;
+;;
 ;; Modal editing segment
 ;;
 ;; -------------------------------------------------------------------------- ;;
@@ -445,22 +461,6 @@ Modal modes checked, in order: `evil-mode', `meow-mode', `god-mode'."
     (mood-line-segment-modal-meow))
    ((featurep 'god-mode)
     (mood-line-segment-modal-god))))
-
-;; -------------------------------------------------------------------------- ;;
-;;
-;; Optional segments
-;;
-;; -------------------------------------------------------------------------- ;;
-
-;; ---------------------------------- ;;
-;; Indentation style
-;; ---------------------------------- ;;
-
-(defun mood-line-segment-indentation ()
-  "Display the indentation style of the current buffer (if enabled)."
-  (when mood-line-show-indentation-style
-    (require 'mood-line-segment-indentation)
-    (mood-line-segment-indentation--segment)))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
