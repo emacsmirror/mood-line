@@ -247,13 +247,13 @@ found to be missing in `mood-line-glyph-alist'."
                 :value-type (character :tag "Character to use")))
 
 (defcustom mood-line-evil-state-alist
-  '((normal . ("<N>" . font-lock-variable-name-face))
-    (insert . ("<I>" . font-lock-string-face))
-    (visual . ("<V>" . font-lock-keyword-face))
-    (replace . ("<R>" . font-lock-type-face))
-    (motion . ("<M>" . font-lock-constant-face))
+  '((normal   . ("<N>" . font-lock-variable-name-face))
+    (insert   . ("<I>" . font-lock-string-face))
+    (visual   . ("<V>" . font-lock-keyword-face))
+    (replace  . ("<R>" . font-lock-type-face))
+    (motion   . ("<M>" . font-lock-constant-face))
     (operator . ("<O>" . font-lock-function-name-face))
-    (emacs . ("<E>" . font-lock-builtin-face)))
+    (emacs    . ("<E>" . font-lock-builtin-face)))
   "Set the string and corresponding face for any `evil-mode' state.
 The `Face' may be either a face symbol or a property list of key-value pairs
  e.g. (:foreground \"red\")."
