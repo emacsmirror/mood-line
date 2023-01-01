@@ -920,9 +920,9 @@ Checkers checked, in order: `flycheck', `flymake'."
                        (:eval (mood-line-segment-modal))
                        (:eval (mood-line-segment-buffer-status))
                        (:eval (mood-line-segment-buffer-name))
+                       (:eval (mood-line-segment-emacsclient))
                        (:eval (mood-line-segment-anzu))
                        (:eval (mood-line-segment-multiple-cursors))
-                       (:eval (mood-line-segment-emacsclient))
                        (:eval (mood-line-segment-cursor-position))))
 
                     ;; Right
