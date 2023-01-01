@@ -110,6 +110,8 @@
     (:buffer-modified . ?*)
     (:buffer-read-only . ?#)
 
+    (:emacsclient . ?c)
+
     (:count-separator . ?*))
   "Set of ASCII glyphs for use with mood-line.")
 
@@ -131,6 +133,8 @@
     (:buffer-modified . ?●)
     (:buffer-read-only . ?■)
 
+    (:emacsclient . ?▶)
+
     (:count-separator . ?×))
   "Set of Fira Code-compatible glyphs for use with mood-line.")
 
@@ -151,6 +155,8 @@
     (:buffer-narrowed . ?▼)
     (:buffer-modified . ?●)
     (:buffer-read-only . ?■)
+
+    (:emacsclient . ?↹)
 
     (:count-separator . ?✕))
   "Set of Unicode glyphs for use with mood-line.")
@@ -236,6 +242,8 @@ glyph.  Glyphs used by mood-line include:
 `:buffer-narrowed'     | File-backed buffer is narrowed
 `:buffer-modified'     | File-backed buffer is modified
 `:buffer-read-only'    | File-backed buffer is read-only
+
+`:emacsclient'         | Frame is a client for an Emacs daemon
 
 `:count-separator'     | Separates some indicator names from numerical counts
 
@@ -450,6 +458,17 @@ Modal modes checked, in order: `evil-mode', `meow-mode', `god-mode'."
     (mood-line-segment-modal-meow))
    ((featurep 'god-mode)
     (mood-line-segment-modal-god))))
+
+;; ---------------------------------- ;;
+;; Emacsclient segment function
+;; ---------------------------------- ;;
+
+(defun mood-line-segment-emacsclient ()
+  "Indicate whether or not the frame is an emacsclient."
+  (if (not (eq (format-mode-line mode-line-client) ""))
+      (format #("%s " 0 1 (face mood-line-status-info))
+              (mood-line--get-glyph :emacsclient))
+    ""))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
@@ -903,6 +922,7 @@ Checkers checked, in order: `flycheck', `flymake'."
                        (:eval (mood-line-segment-buffer-name))
                        (:eval (mood-line-segment-anzu))
                        (:eval (mood-line-segment-multiple-cursors))
+                       (:eval (mood-line-segment-emacsclient))
                        (:eval (mood-line-segment-cursor-position))))
 
                     ;; Right
