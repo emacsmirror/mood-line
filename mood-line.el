@@ -512,30 +512,33 @@ Modal modes checked, in order: `evil-mode', `meow-mode', `god-mode'."
                                                   (+ (if (eq backend 'Hg) 2 3)
                                                      2)))
                  (state (vc-state buffer-file-name
-                                  (vc-backend buffer-file-name)))
-                 (face 'mood-line-status-neutral)
-                 (glyph :vc-good))
+                                  (vc-backend buffer-file-name))))
             (cond
              ((memq state '(edited added))
-              (setq face 'mood-line-status-info
-                    glyph :vc-added))
+              (format #("%s %s  "
+                        0 2 (face mood-line-status-info))
+                      (mood-line--get-glyph :vc-added)
+                      branch))
              ((eq state 'needs-merge)
-              (setq face 'mood-line-status-warning
-                    glyph :vc-needs-merge))
+              (format #("%s %s  "
+                        0 2 (face mood-line-status-warning))
+                      (mood-line--get-glyph :vc-needs-merge)
+                      branch))
              ((eq state 'needs-update)
-              (setq face 'mood-line-status-warning
-                    glyph :vc-needs-update))
+              (format #("%s %s  "
+                        0 2 (face mood-line-status-warning))
+                      (mood-line--get-glyph :vc-needs-update)
+                      branch))
              ((memq state '(removed conflict unregistered))
-              (setq face 'mood-line-status-error
-                    glyph :vc-conflict))
+              (format #("%s %s  "
+                        0 2 (face mood-line-status-error))
+                      (mood-line--get-glyph :vc-conflict)
+                      branch))
              (t
-              (setq face 'mood-line-status-neutral
-                    glyph :vc-good)))
-            (propertize (concat (mood-line--get-glyph glyph)
-                                " "
-                                branch
-                                "  ")
-                        'face face)))))
+              (format #("%s %s  "
+                        0 5 (face mood-line-status-neutral))
+                      (mood-line--get-glyph :vc-good)
+                      branch)))))))
 
 ;; ---------------------------------- ;;
 ;; Segment function
@@ -561,21 +564,21 @@ Modal modes checked, in order: `evil-mode', `meow-mode', `god-mode'."
   "Return alist with count of all error types in `flycheck-current-errors'.
 
 Counts will be returned in an alist as the `cdr' of the following keys:
-`'info-count'    | All notes reported by checker
+`'note-count'    | All notes reported by checker
 `'error-count'   | All errors reported by checker
 `'warning-count' | All warnings reported by checker
-`'issues-count'  | All errors and warnings reported by checker
+`'issue-count'   | All errors and warnings reported by checker
 `'all-count'     | Everything reported by checker"
   (let-alist (flycheck-count-errors flycheck-current-errors)
-    (let ((info-count (+ (or .info 0)))
+    (let ((note-count (+ (or .info 0)))
           (error-count (+ (or .error 0)))
           (warning-count (+ (or .warning 0))))
-      `((info-count . ,info-count)
+      `((note-count . ,note-count)
         (error-count . ,error-count)
         (warning-count . ,warning-count)
-        (issues-count . ,(+ warning-count
-                            error-count))
-        (all-count . ,(+ info-count
+        (issue-count . ,(+ warning-count
+                           error-count))
+        (all-count . ,(+ note-count
                          warning-count
                          error-count))))))
 
@@ -587,31 +590,31 @@ Counts will be returned in an alist as the `cdr' of the following keys:
            (let-alist (mood-line--checker-flycheck-count-errors)
              (cond
               ((> .error-count 0)
-               (propertize (concat (mood-line--get-glyph :checker-issues)
-                                   " Errors: "
-                                   (number-to-string .all-count)
-                                   "  ")
-                           'face 'mood-line-status-error))
+               (format #("%s %s Issue%s  "
+                         0 2 (face mood-line-status-error))
+                       (mood-line--get-glyph :checker-issues)
+                       .issue-count
+                       (if (> .issue-count 1) "s" "")))
               ((> .warning-count 0)
-               (propertize (concat (mood-line--get-glyph :checker-issues)
-                                   " Issues: "
-                                   (number-to-string .all-count)
-                                   "  ")
-                           'face 'mood-line-status-warning))
-              ((> .info-count 0)
-               (propertize (concat (mood-line--get-glyph :checker-info)
-                                   " Info: "
-                                   (number-to-string .all-count)
-                                   "  ")
-                           'face 'mood-line-status-info))
+               (format #("%s %s Issue%s  "
+                         0 2 (face mood-line-status-warning))
+                       (mood-line--get-glyph :checker-issues)
+                       .issue-count
+                       (if (> .issue-count 1) "s" "")))
+              ((> .note-count 0)
+               (format #("%s %s Note%s  "
+                         0 2 (face mood-line-status-info))
+                       (mood-line--get-glyph :checker-info)
+                       .note-count
+                       (if (> .note-count 1) "s" "")))
               ((zerop .all-count)
-               (propertize (concat (mood-line--get-glyph :checker-good)
-                                   " Good  ")
-                           'face 'mood-line-status-success)))))
+               (format #("%s No Issues  "
+                         0 12 (face mood-line-status-neutral))
+                       (mood-line--get-glyph :checker-good))))))
           ('running
-           (propertize (concat (mood-line--get-glyph :checker-checking)
-                               " Checking  ")
-                       'face 'mood-line-status-info))
+           (format #("%s Checking  "
+                     0 12 (face mood-line-status-neutral))
+                   (mood-line--get-glyph :checker-checking)))
           ('errored
            (propertize (concat (mood-line--get-glyph :checker-errored)
                                " Error  ")
@@ -648,20 +651,20 @@ Counts will be returned in an alist as the `cdr' of the following keys:
   "Return alist with count of all current flymake diagnostic reports.
 
 Counts will be returned in an alist as the cdr of the following keys:
-`'info-count'    | All notes reported by checker
+`'note-count'    | All notes reported by checker
 `'error-count'   | All errors reported by checker
 `'warning-count' | All warnings reported by checkero
-`'issues-count'  | All errors and warnings reported by checker
+`'issue-count'   | All errors and warnings reported by checker
 `'all-count'     | Everything reported by checker"
-  (let ((info-count (mood-line--checker-flymake-count-report-type :note))
+  (let ((note-count (mood-line--checker-flymake-count-report-type :note))
         (error-count (mood-line--checker-flymake-count-report-type :error))
         (warning-count (mood-line--checker-flymake-count-report-type :warning)))
-    `((info-count . ,info-count)
+    `((note-count . ,note-count)
       (error-count . ,error-count)
       (warning-count . ,warning-count)
-      (issues-count . ,(+ warning-count
-                          error-count))
-      (all-count . ,(+ info-count
+      (issue-count . ,(+ warning-count
+                         error-count))
+      (all-count . ,(+ note-count
                        warning-count
                        error-count)))))
 
@@ -689,7 +692,7 @@ Counts will be returned in an alist as the cdr of the following keys:
                                   (number-to-string .all-count)
                                   "  ")
                           'face 'mood-line-status-warning))
-             ((> .info-count 0)
+             ((> .note-count 0)
               (propertize (concat (mood-line--get-glyph :checker-info)
                                   " Info: "
                                   (number-to-string .all-count)
