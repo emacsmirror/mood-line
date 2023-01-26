@@ -80,6 +80,10 @@
 
 (declare-function mood-line-segment-indentation--segment "mood-line-segment-indentation" ())
 
+(declare-function mood-line-segment-modal--evil "mood-line-segment-modal" ())
+(declare-function mood-line-segment-modal--meow "mood-line-segment-modal" ())
+(declare-function mood-line-segment-modal--god "mood-line-segment-modal" ())
+
 (declare-function mc/num-cursors "multiple-cursors" ())
 
 (declare-function string-blank-p "subr-x" (string))
@@ -246,38 +250,6 @@ found to be missing in `mood-line-glyph-alist'."
                 :key-type (symbol :tag "Glyph name")
                 :value-type (character :tag "Character to use")))
 
-(defcustom mood-line-evil-state-alist
-  '((normal . ("<N>" . font-lock-variable-name-face))
-    (insert . ("<I>" . font-lock-string-face))
-    (visual . ("<V>" . font-lock-keyword-face))
-    (replace . ("<R>" . font-lock-type-face))
-    (motion . ("<M>" . font-lock-constant-face))
-    (operator . ("<O>" . font-lock-function-name-face))
-    (emacs . ("<E>" . font-lock-builtin-face)))
-  "Set the string and corresponding face for any `evil-mode' state.
-The `Face' may be either a face symbol or a property list of key-value pairs
- e.g. (:foreground \"red\")."
-  :group 'mood-line
-  :type '(alist
-          :key-type symbol
-          :value-type
-          (cons (string :tag "Display Text") (choice :tag "Face" face plist))))
-
-(defcustom mood-line-meow-state-alist
-  '((normal . ("<N>" . font-lock-variable-name-face))
-    (insert . ("<I>" . font-lock-string-face))
-    (keypad . ("<K>" . font-lock-keyword-face))
-    (beacon . ("<B>" . font-lock-type-face))
-    (motion . ("<M>" . font-lock-constant-face)))
-  "Set the string and corresponding face for any `meow-mode' state.
-The `Face' may be either a face symbol or a property list of key-value pairs
- e.g. (:foreground \"red\")."
-  :group 'mood-line
-  :type '(alist
-          :key-type symbol
-          :value-type
-          (cons (string :tag "Display Text") (choice :tag "Face" face plist))))
-
 ;; ---------------------------------- ;;
 ;; Face definitions
 ;; ---------------------------------- ;;
@@ -378,7 +350,7 @@ The mode line should fit the `window-width' with space between the lists."
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
-;; Optional segments
+;; Optional/lazy loaded segments
 ;;
 ;; -------------------------------------------------------------------------- ;;
 
@@ -392,51 +364,8 @@ The mode line should fit the `window-width' with space between the lists."
     (require 'mood-line-segment-indentation)
     (mood-line-segment-indentation--segment)))
 
-;; -------------------------------------------------------------------------- ;;
-;;
-;; Modal editing segment
-;;
-;; -------------------------------------------------------------------------- ;;
-
 ;; ---------------------------------- ;;
-;; Evil segment function
-;; ---------------------------------- ;;
-
-(defun mood-line-segment-modal-evil ()
-  "Display the current evil-mode state."
-  (when (boundp 'evil-state)
-    (let ((mode-cons (alist-get evil-state mood-line-evil-state-alist)))
-      (concat (propertize (car mode-cons)
-                          'face (cdr mode-cons))
-              " "))))
-
-;; ---------------------------------- ;;
-;; Meow segment function
-;; ---------------------------------- ;;
-
-(defun mood-line-segment-modal-meow ()
-  "Display the current meow-mode state."
-  (when (boundp 'meow--current-state)
-    (let ((mode-cons (alist-get
-                      meow--current-state
-                      mood-line-meow-state-alist)))
-      (concat (propertize (car mode-cons)
-                          'face (cdr mode-cons))
-              " "))))
-
-;; ---------------------------------- ;;
-;; God segment function
-;; ---------------------------------- ;;
-
-(defun mood-line-segment-modal-god ()
-  "Indicate whether or not god-mode is active."
-  (if (bound-and-true-p god-local-mode)
-      '(:propertize "<G> "
-                    face (:inherit mood-line-status-warning))
-    "--- "))
-
-;; ---------------------------------- ;;
-;; Modal segment function
+;; Modal editing
 ;; ---------------------------------- ;;
 
 (defun mood-line-segment-modal ()
@@ -445,11 +374,14 @@ The mode line should fit the `window-width' with space between the lists."
 Modal modes checked, in order: `evil-mode', `meow-mode', `god-mode'."
   (cond
    ((bound-and-true-p evil-mode)
-    (mood-line-segment-modal-evil))
+    (require 'mood-line-segment-modal)
+    (mood-line-segment-modal--evil))
    ((bound-and-true-p meow-mode)
-    (mood-line-segment-modal-meow))
+    (require 'mood-line-segment-modal)
+    (mood-line-segment-modal--meow))
    ((featurep 'god-mode)
-    (mood-line-segment-modal-god))))
+    (require 'mood-line-segment-modal)
+    (mood-line-segment-modal--god))))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
