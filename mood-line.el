@@ -283,62 +283,62 @@ The `Face' may be either a face symbol or a property list of key-value pairs
 ;; ---------------------------------- ;;
 
 (defface mood-line-buffer-name
-  '((t (:inherit (mode-line-buffer-id))))
+  '((t (:inherit mode-line-buffer-id)))
   "Face used for displaying the value of `buffer-name'."
   :group 'mood-line-faces)
 
 (defface mood-line-buffer-status-modified
-  '((t (:inherit (error) :weight normal)))
+  '((t (:inherit error :weight normal)))
   "Face used for the ':buffer-modified' buffer status indicator."
   :group 'mood-line-faces)
 
 (defface mood-line-buffer-status-read-only
-  '((t (:inherit (shadow) :weight normal)))
+  '((t (:inherit shadow :weight normal)))
   "Face used for the ':buffer-read-only' buffer status indicator."
   :group 'mood-line-faces)
 
 (defface mood-line-buffer-status-narrowed
-  '((t (:inherit (font-lock-doc-face) :weight normal)))
+  '((t (:inherit font-lock-doc-face :weight normal)))
   "Face used for the ':buffer-narrowed' buffer status indicator."
   :group 'mood-line-faces)
 
 (defface mood-line-major-mode
-  '((t (:inherit (bold))))
+  '((t (:inherit bold)))
   "Face used for the major mode indicator."
   :group 'mood-line-faces)
 
 (defface mood-line-status-neutral
-  '((t (:inherit (shadow) :weight normal)))
+  '((t (:inherit mood-line-unimportant)))
   "Face used for neutral or inactive status indicators."
   :group 'mood-line-faces)
 
 (defface mood-line-status-info
-  '((t (:inherit (font-lock-keyword-face) :weight normal)))
+  '((t (:inherit font-lock-keyword-face :weight normal)))
   "Face used for generic status indicators."
   :group 'mood-line-faces)
 
 (defface mood-line-status-success
-  '((t (:inherit (success) :weight normal)))
+  '((t (:inherit success :weight normal)))
   "Face used for success status indicators."
   :group 'mood-line-faces)
 
 (defface mood-line-status-warning
-  '((t (:inherit (warning) :weight normal)))
+  '((t (:inherit warning :weight normal)))
   "Face for warning status indicators."
   :group 'mood-line-faces)
 
 (defface mood-line-status-error
-  '((t (:inherit (error) :weight normal)))
+  '((t (:inherit error :weight normal)))
   "Face for error status indicators."
   :group 'mood-line-faces)
 
 (defface mood-line-encoding
-  '((t (:inherit (shadow) :weight normal)))
+  '((t (:inherit mood-line-unimportant)))
   "Face used for buffer/file encoding information."
   :group 'mood-line-faces)
 
 (defface mood-line-unimportant
-  '((t (:inherit (shadow) :weight normal)))
+  '((t (:inherit shadow :weight normal)))
   "Face used for less important mode line elements."
   :group 'mood-line-faces)
 
