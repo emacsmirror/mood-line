@@ -83,6 +83,7 @@
 (declare-function mood-line-segment-modal--evil "mood-line-segment-modal" ())
 (declare-function mood-line-segment-modal--meow "mood-line-segment-modal" ())
 (declare-function mood-line-segment-modal--god "mood-line-segment-modal" ())
+(declare-function mood-line-segment-modal--xah "mood-line-segment-modal" ())
 
 (declare-function mc/num-cursors "multiple-cursors" ())
 
@@ -381,7 +382,10 @@ Modal modes checked, in order: `evil-mode', `meow-mode', `god-mode'."
     (mood-line-segment-modal--meow))
    ((featurep 'god-mode)
     (require 'mood-line-segment-modal)
-    (mood-line-segment-modal--god))))
+    (mood-line-segment-modal--god))
+   ((bound-and-true-p xah-fly-keys)
+    (require 'mood-line-segment-modal)
+    (mood-line-segment-modal--xah))))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;

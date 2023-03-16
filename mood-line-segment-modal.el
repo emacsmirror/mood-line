@@ -114,6 +114,16 @@ The `Face' may be either a face symbol or a property list of key-value pairs
                     face (:inherit mood-line-status-warning))
     "--- "))
 
+;; ---------------------------------- ;;
+;; Xah segment function
+;; ---------------------------------- ;;
+
+(defun mood-line-segment-modal--xah ()
+  "Display the current xah-fly-keys state."
+  (if (bound-and-true-p xah-fly-insert-state-p)
+      "<I> "
+      "<C> "))
+
 ;; -------------------------------------------------------------------------- ;;
 ;;
 ;; Provide package
