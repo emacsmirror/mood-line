@@ -434,43 +434,55 @@ Modal modes checked, in order: `evil-mode', `meow-mode', `god-mode'."
 
 (defvar-local mood-line--vc-text nil)
 
+(defun mood-line--vc-branch ()
+  "Return the current vc branch or nil."
+  (when vc-display-status
+    (let ((backend (vc-backend buffer-file-name)))
+      (substring-no-properties vc-mode
+                               (+ (if (eq backend 'Hg) 2 3)
+                                  2)))))
+
+(defun mood-line--vc-glyph ()
+  "Get the glyph to use for the buffer's vc state."
+  (mood-line--get-glyph
+   (alist-get (vc-state buffer-file-name
+                        (vc-backend buffer-file-name))
+              '((added . :vc-added)
+                (edited . :vc-added)
+                (needs-merge . :vc-needs-merge)
+                (needs-update . :vc-needs-update)
+                (removed . :vc-conflict)
+                (conflict . :vc-conflict)
+                (unregistered . :vc-conflict))
+              :vc-good)))
+
+(defun mood-line--vc-face ()
+  "Get the face to use for the buffer's vc state."
+  (alist-get (vc-state buffer-file-name
+                       (vc-backend buffer-file-name))
+             '((added . mood-line-status-info)
+               (edited . mood-line-status-info)
+               (needs-merge . mood-line-status-warning)
+               (needs-update . mood-line-status-warning)
+               (removed . mood-line-status-error)
+               (conflict . mood-line-status-error)
+               (unregistered . mood-line-status-error))
+             'mood-line-status-neutral))
+
 (defun mood-line--vc-update-segment (&rest _)
   "Update `mood-line--vc-text' against the current VCS state."
   (setq mood-line--vc-text
         (when (and vc-mode
                    buffer-file-name)
-          (let* ((backend (vc-backend buffer-file-name))
-                 (branch (substring-no-properties vc-mode
-                                                  (+ (if (eq backend 'Hg) 2 3)
-                                                     2)))
-                 (state (vc-state buffer-file-name
-                                  (vc-backend buffer-file-name))))
-            (cond
-             ((memq state '(edited added))
-              (format #("%s %s  "
-                        0 2 (face mood-line-status-info))
-                      (mood-line--get-glyph :vc-added)
-                      branch))
-             ((eq state 'needs-merge)
-              (format #("%s %s  "
-                        0 2 (face mood-line-status-warning))
-                      (mood-line--get-glyph :vc-needs-merge)
-                      branch))
-             ((eq state 'needs-update)
-              (format #("%s %s  "
-                        0 2 (face mood-line-status-warning))
-                      (mood-line--get-glyph :vc-needs-update)
-                      branch))
-             ((memq state '(removed conflict unregistered))
-              (format #("%s %s  "
-                        0 2 (face mood-line-status-error))
-                      (mood-line--get-glyph :vc-conflict)
-                      branch))
-             (t
-              (format #("%s %s  "
-                        0 5 (face mood-line-status-neutral))
-                      (mood-line--get-glyph :vc-good)
-                      branch)))))))
+          (let ((branch (mood-line--vc-branch))
+                (glyph (mood-line--vc-glyph))
+                (face (mood-line--vc-face)))
+            (if branch
+                (format #("%s %s  " 0 2 (face face))
+                        glyph
+                        branch)
+              (format #("%s  " 0 2 (face face))
+                      glyph))))))
 
 ;; ---------------------------------- ;;
 ;; Segment function
