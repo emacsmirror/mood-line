@@ -45,7 +45,7 @@ If you are a user of `use-package`, it is easy to configure mood-line directly i
 
   ;; Use pretty Fira Code-compatible glyphs
   :custom
-  (mood-line-glyph-alist . mood-line-glyphs-fira-code))
+  (mood-line-glyph-alist mood-line-glyphs-fira-code))
 ```
 
 By default, mood-line will use basic ASCII character glyphs to decorate mode line segments.
