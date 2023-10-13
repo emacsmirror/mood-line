@@ -865,6 +865,12 @@ Checkers checked, in order: `flycheck', `flymake'."
   (remove-hook 'flycheck-mode-hook
                #'mood-line--checker-flycheck-update-segment)
 
+  ;; Remove flymake hooks
+  (advice-remove 'flymake-start
+                 #'mood-line--checker-flymake-update-segment)
+  (advice-remove 'flymake--handle-report
+                 #'mood-line--checker-flymake-update-segment)
+
   ;; Remove VC hooks
   (remove-hook 'file-find-hook
                #'mood-line--vc-update-segment)
