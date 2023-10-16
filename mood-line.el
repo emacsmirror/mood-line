@@ -77,6 +77,7 @@
 
 (declare-function flymake-running-backends "flymake" ())
 (declare-function flymake-reporting-backends "flymake" ())
+(declare-function flymake--lookup-type-property "flymake" (type prop &optional default))
 
 (declare-function mood-line-segment-indentation--segment "mood-line-segment-indentation" ())
 
@@ -571,7 +572,8 @@ Counts will be returned in an alist as the `cdr' of the following keys:
   "Return count of current flymake reports of TYPE."
   (let ((count 0))
     (dolist (d (flymake-diagnostics))
-      (when (eq (cl-struct-slot-value 'flymake--diag 'type d) type)
+      (when (eq (flymake--lookup-type-property (flymake-diagnostic-type d) 'severity)
+                (flymake--lookup-type-property type 'severity))
         (cl-incf count)))
     count))
 
