@@ -708,7 +708,7 @@ Checkers checked, in order: `flycheck', `flymake'."
           (when mood-line-show-cursor-point
             (propertize (format ":%d" (point))
                         'face 'mood-line-unimportant))
-          (propertize " %p%%  "
+          (propertize " %o%%  "
                       'face 'mood-line-unimportant)))
 
 ;; ---------------------------------- ;;
