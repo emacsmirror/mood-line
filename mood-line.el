@@ -338,16 +338,17 @@ returned from `mood-line-glyphs-ascii'."
                                  mood-line-glyphs-ascii))))
 
 (defun mood-line--format (left right)
-  "Format a mode line with a `LEFT' and `RIGHT' justified list of elements.
-The mode line should fit the `window-width' with space between the lists."
-  (let ((reserve (length right)))
-    (concat left
-            " "
+  "Format a mode line string with LEFT and RIGHT justified lists of segments.
+Returned string will be padded in the center to fit `window-width'."
+  (let* ((left-str (string-join left))
+         (right-str (string-join right))
+         (reserve (length right-str)))
+    (concat left-str
             (propertize " "
                         'display `((space :align-to (- right
-                                                       (- 0 right-margin)
-                                                       ,reserve))))
-            right)))
+                                                           (- 0 right-margin)
+                                                           ,reserve))))
+            right-str)))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
@@ -695,8 +696,7 @@ Checkers checked, in order: `flycheck', `flymake'."
 
 (defun mood-line-segment-buffer-name ()
   "Display the name of the current buffer."
-  (propertize "%b  "
-              'face 'mood-line-buffer-name))
+  (format-mode-line "%b  " 'mood-line-buffer-name))
 
 ;; ---------------------------------- ;;
 ;; Cursor position segment
@@ -704,12 +704,11 @@ Checkers checked, in order: `flycheck', `flymake'."
 
 (defun mood-line-segment-cursor-position ()
   "Display the position of the cursor in the current buffer."
-  (concat "%l:%c"
+  (concat (format-mode-line "%l:%c")
           (when mood-line-show-cursor-point
             (propertize (format ":%d" (point))
                         'face 'mood-line-unimportant))
-          (propertize " %o%%  "
-                      'face 'mood-line-unimportant)))
+          (format-mode-line " %o%%  " 'mood-line-unimportant)))
 
 ;; ---------------------------------- ;;
 ;; EOL segment
@@ -822,29 +821,25 @@ Checkers checked, in order: `flycheck', `flymake'."
 
   ;; Set new value of `mode-line-format'
   (setq-default mode-line-format
-                '((:eval
-                   (mood-line--format
-                    ;; Left
-                    (format-mode-line
-                     '(" "
-                       (:eval (mood-line-segment-modal))
-                       (:eval (mood-line-segment-buffer-status))
-                       (:eval (mood-line-segment-buffer-name))
-                       (:eval (mood-line-segment-anzu))
-                       (:eval (mood-line-segment-multiple-cursors))
-                       (:eval (mood-line-segment-cursor-position))))
-
-                    ;; Right
-                    (format-mode-line
-                     '((:eval (mood-line-segment-indentation))
-                       (:eval (mood-line-segment-eol))
-                       (:eval (mood-line-segment-encoding))
-                       (:eval (mood-line-segment-vc))
-                       (:eval (mood-line-segment-major-mode))
-                       (:eval (mood-line-segment-misc-info))
-                       (:eval (mood-line-segment-checker))
-                       (:eval (mood-line-segment-process))
-                       " ")))))))
+              '(:eval (mood-line--format
+                       ;; Left
+                       (list " "
+                             (mood-line-segment-modal)
+                             (mood-line-segment-buffer-status)
+                             (mood-line-segment-buffer-name)
+                             (mood-line-segment-anzu)
+                             (mood-line-segment-multiple-cursors)
+                             (mood-line-segment-cursor-position))
+                       ;; Right
+                       (list (mood-line-segment-indentation)
+                             (mood-line-segment-eol)
+                             (mood-line-segment-encoding)
+                             (mood-line-segment-vc)
+                             (mood-line-segment-major-mode)
+                             (mood-line-segment-misc-info)
+                             (mood-line-segment-checker)
+                             (mood-line-segment-process)
+                             " ")))))
 
 ;; ---------------------------------- ;;
 ;; Deactivation function
