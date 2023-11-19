@@ -39,13 +39,21 @@
 ;; External function decls
 ;; ---------------------------------- ;;
 
-(declare-function mood-line--get-glyph "mood-line" (glyph))
+(declare-function mood-line--get-glyph "mood-line")
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
 ;; Custom definitions
 ;;
 ;; -------------------------------------------------------------------------- ;;
+
+;; ---------------------------------- ;;
+;; Group definitions
+;; ---------------------------------- ;;
+
+(defgroup mood-line-segment-indentation nil
+  "An indentation info segment for mood-line."
+  :group 'mood-line)
 
 ;; ---------------------------------- ;;
 ;; Variable definitions
@@ -55,14 +63,14 @@
   "When non-nil, always show the indentation offset of the current mode.
 
 Default behavior of the indentation segment is to display the indentation offset
-of the current mode when `indent-tabs-mode' is non-nil and an offset value can
-be found for the current mode.  Otherwise, `tab-wdith' will be shown.
+ of the current mode when `indent-tabs-mode' is non-nil and an offset value can
+ be found for the current mode.  Otherwise, `tab-wdith' will be shown.
 
 When `mood-line-segment-indentation-always-show-offset' is set to non-nil, the
-indentation offset will always be shown alongside `tab-width'.  If an offset
-value cannot be found for the current mode, a \"?\" character will be displayed
-alongside `tab-width'."
-  :group 'mood-line
+ indentation offset will always be shown alongside `tab-width'.  If an offset
+ value cannot be found for the current mode, a \"?\" character will be displayed
+ alongside `tab-width'."
+  :group 'mood-line-segment-indentation
   :type 'boolean)
 
 ;; Assembled from `editorconfig-indentation-alist' and `doom-modeline-indent-alist':
@@ -173,9 +181,9 @@ alongside `tab-width'."
   "Alist mapping major mode names to their respective indent offset variables.
 
 When multiple variables are specified for a given mode, the offset value will
-be retrieved from the first variable that resolves to a value (evaluated in the
-order provided)."
-  :group 'mood-line
+ be retrieved from the first variable that resolves to a value, evaluated in the
+ order provided."
+  :group 'mood-line-segment-indentation
   :type '(alist :key-type symbol :value-type sexp))
 
 ;; -------------------------------------------------------------------------- ;;
@@ -188,8 +196,8 @@ order provided)."
 ;; Segment function
 ;; ---------------------------------- ;;
 
-(defun mood-line-segment-indentation--segment ()
-  "Display the indentation style of the current buffer."
+(defun mood-line-segment-indentation ()
+  "Return the indentation style of the current buffer."
   (let* ((mode-offset (symbol-value
                        (seq-some #'identity
                                  (cdr (assoc major-mode
@@ -202,8 +210,7 @@ order provided)."
                                     tab-width)
                           (number-to-string (if indent-tabs-mode
                                                 tab-width
-                                              (or mode-offset tab-width))))
-                        "  ")
+                                              (or mode-offset tab-width)))))
                 'face 'mood-line-encoding)))
 
 ;; -------------------------------------------------------------------------- ;;
