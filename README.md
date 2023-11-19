@@ -21,7 +21,7 @@ mood-line is a lightweight, drop-in replacement for the default Emacs mode line 
 
 ## Preview
 
-![Preview Image](https://gitlab.com/jessieh/mood-line/raw/assets/mood-line.png "Preview Image")
+![Preview Image](.repo-assets/preview.png "Preview Image")
 
 ## Configuration
 
