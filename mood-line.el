@@ -77,6 +77,45 @@
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
+;; Macros
+;;
+;; -------------------------------------------------------------------------- ;;
+
+(defmacro mood-line--deflazy (name)
+  "Define dummy function NAME to `require' its module and call actual function.
+If NAME is already bound, this does nothing."
+  (when-let ((not-bound (not (fboundp name)))
+             (module (intern (car (split-string (symbol-name name) "--")))))
+    `(defun ,name (&rest args)
+       "Not yet loaded."
+       (fmakunbound (quote ,name))
+       (require (quote ,module))
+       (apply (function ,name) args))))
+
+(defmacro mood-line-defformat (left &optional right)
+  "Format LEFT and RIGHT segment lists as a `mood-line-format' sequence.
+
+A segment may be a string, a cons cell of the form (FUNCTION . SEPARATOR),
+ or any expression that evaluates to a string or nil.
+
+Strings will be collected into the format sequence unaltered.
+
+Cons cells of the form (FUNCTION . SEPARATOR) will expand into the format
+ sequence as FUNCTION, followed by SEPARATOR.
+
+All other expressions will expand into the format sequence unaltered,
+ followed by an empty string. This prevents accidental elision of the
+ following segment should the expression evaluate to nil."
+  `(quote ,(mapcar
+            (lambda (segments)
+              (cl-loop for seg in segments
+                       if (cdr-safe seg) append `(,(car seg) ,(cdr seg))
+                       else if (stringp seg) collect seg
+                       else append `(,seg "")))
+            `(,left ,right))))
+
+;; -------------------------------------------------------------------------- ;;
+;;
 ;; Constants
 ;;
 ;; -------------------------------------------------------------------------- ;;
@@ -145,43 +184,49 @@
   "Set of Unicode glyphs for use with mood-line.")
 
 (defconst mood-line-format-default
-  '((" "
-     (mood-line-segment-modal) " "
-     (mood-line-segment-buffer-status) " "
-     (mood-line-segment-buffer-name) "  "
-     (mood-line-segment-anzu) "  "
-     (mood-line-segment-multiple-cursors) "  "
-     (mood-line-segment-cursor-position) " "
-     (mood-line-segment-scroll))
-    ((mood-line-segment-vc) "  "
-     (mood-line-segment-major-mode) "  "
-     (mood-line-segment-misc-info) "  "
-     (mood-line-segment-checker) "  "
-     (mood-line-segment-process) "  "
-     " "))
+  (mood-line-defformat
+   ;; Left
+   (" "
+    ((mood-line-segment-modal)            . " ")
+    ((mood-line-segment-buffer-status)    . " ")
+    ((mood-line-segment-buffer-name)      . "  ")
+    ((mood-line-segment-anzu)             . "  ")
+    ((mood-line-segment-multiple-cursors) . "  ")
+    ((mood-line-segment-cursor-position)  . " ")
+    (mood-line-segment-scroll))
+   ;; Right
+   (((mood-line-segment-vc)         . "  ")
+    ((mood-line-segment-major-mode) . "  ")
+    ((mood-line-segment-misc-info)  . "  ")
+    ((mood-line-segment-checker)    . "  ")
+    ((mood-line-segment-process)    . "  ")
+    " "))
   "Default format for mood-line.")
 
 (defconst mood-line-format-default-extended
-  '((" "
-     (mood-line-segment-modal) " "
-     (mood-line-segment-buffer-status) " "
-     (mood-line-segment-buffer-name) "  "
-     (mood-line-segment-anzu) "  "
-     (mood-line-segment-multiple-cursors) "  "
-     (mood-line-segment-cursor-position) ""
-     #(":" 0 1 (face mood-line-unimportant))
-     (mood-line-segment-cursor-point) " "
-     (mood-line-segment-region) " "
-     (mood-line-segment-scroll))
-    ((mood-line-segment-indentation) "  "
-     (mood-line-segment-eol) "  "
-     (mood-line-segment-encoding) "  "
-     (mood-line-segment-vc) "  "
-     (mood-line-segment-major-mode) "  "
-     (mood-line-segment-misc-info) "  "
-     (mood-line-segment-checker) "  "
-     (mood-line-segment-process) "  "
-     " "))
+  (mood-line-defformat
+   ;; Left
+   (" "
+    ((mood-line-segment-modal)            . " ")
+    ((mood-line-segment-buffer-status)    . " ")
+    ((mood-line-segment-buffer-name)      . "  ")
+    ((mood-line-segment-anzu)             . "  ")
+    ((mood-line-segment-multiple-cursors) . "  ")
+    (mood-line-segment-cursor-position)
+    #(":" 0 1 (face mood-line-unimportant))
+    ((mood-line-segment-cursor-point)     . " ")
+    ((mood-line-segment-region)           . " ")
+    (mood-line-segment-scroll))
+   ;; Right
+   (((mood-line-segment-indentation) . "  ")
+    ((mood-line-segment-eol)         . "  ")
+    ((mood-line-segment-encoding)    . "  ")
+    ((mood-line-segment-vc)          . "  ")
+    ((mood-line-segment-major-mode)  . "  ")
+    ((mood-line-segment-misc-info)   . "  ")
+    ((mood-line-segment-checker)     . "  ")
+    ((mood-line-segment-process)     . "  ")
+    " "))
   "Extended default format for mood-line showcasing all included segments.")
 
 ;; -------------------------------------------------------------------------- ;;
@@ -265,7 +310,9 @@ When a segment evaluates to nil, the following segment will be skipped and not
  processed or displayed. This behavior may be used to, e.g., conditionally
  display separating whitespace after a segment.
 
-Examples: `mood-line-format-default' and `mood-line-format-default-extended'"
+Examples: `mood-line-format-default' and `mood-line-format-default-extended'
+
+See `mood-line-defformat' for a helpful formatting macro."
   :group 'mood-line
   :type '(list :tag "Mode line segments"
                (repeat :tag "Left side" sexp)
@@ -385,17 +432,6 @@ described in the documentation for `mood-line-format', which see."
 ;; Optional/lazy-loaded segments
 ;;
 ;; -------------------------------------------------------------------------- ;;
-
-(defmacro mood-line--deflazy (name)
-  "Define dummy function NAME to `require' its module and call actual function.
-If NAME is already bound, this does nothing."
-  (when-let ((not-bound (not (fboundp name)))
-             (module (intern (car (split-string (symbol-name name) "--")))))
-    `(defun ,name (&rest args)
-       "Not yet loaded."
-       (fmakunbound (quote ,name))
-       (require (quote ,module))
-       (apply (function ,name) args))))
 
 ;; ---------------------------------- ;;
 ;; Modal editing

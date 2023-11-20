@@ -9,6 +9,68 @@
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
+;; Macros
+;;
+;; -------------------------------------------------------------------------- ;;
+
+;; ---------------------------------- ;;
+;; mood-line-defformat
+;; ---------------------------------- ;;
+
+(ert-deftest -defformat/right-nil ()
+  "The format sequence should expand if the right segment list is not provided."
+  (should (equal (mood-line-defformat
+                  ;; Left
+                  ("XYZ")
+                  ;; Right
+                  )
+                 (list
+                  ;; Left
+                  '("XYZ")
+                  ;; Right
+                  nil))))
+
+(ert-deftest -defformat/left-right ()
+  "The expanded sequence should should include left and right segments lists."
+  (should (equal (mood-line-defformat
+                  ;; Left
+                  ("ABC")
+                  ;; Right
+                  ("XYZ"))
+                 (list
+                  ;; Left
+                  '("ABC")
+                  ;; Right
+                  '("XYZ")))))
+
+(ert-deftest -defformat/cons-cells ()
+  "Cons cell segments should expand into their `car' and `cdr' values."
+  (should (equal (mood-line-defformat
+                  ;; Left
+                  ("ABC" ("ABC" . "XYZ") "XYZ")
+                  ;; Right
+                  ("..." ((some-fn) . " ") "..."))
+                 (list
+                  ;; Left
+                  '("ABC" "ABC" "XYZ" "XYZ")
+                  ;; Right
+                  '("..." (some-fn) " " "...")))))
+
+(ert-deftest -defformat/exp-separators ()
+  "Non-string, non-cons expressions should expand followed by a blank string."
+  (should (equal (mood-line-defformat
+                  ;; Left
+                  ("ABC" ("ABC" . "XYZ") some-exp "XYZ" (some-fn))
+                  ;; Right
+                  ("..." ((some-fn) . " ") (another-fn) "..."))
+                 (list
+                  ;; Left
+                  '("ABC" "ABC" "XYZ" some-exp "" "XYZ" (some-fn) "")
+                  ;; Right
+                  '("..." (some-fn) " " (another-fn) "" "...")))))
+
+;; -------------------------------------------------------------------------- ;;
+;;
 ;; Helper functions
 ;;
 ;; -------------------------------------------------------------------------- ;;

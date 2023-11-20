@@ -59,21 +59,23 @@ mood-line uses a modular segment format, and it is easy to reconfigure:
 ;; Custom format:
 ;;   * init.el : ELisp                                     Top 4:32  |  ! Issues: 2
 (setq mood-line-format
-      '(;; Left side
-        (" "
-         (mood-line-segment-buffer-status) " "
-         (mood-line-segment-buffer-name) " : "
-         (mood-line-segment-major-mode))
-        ;; Right side
-        ((mood-line-segment-scroll) " "
-         (mood-line-segment-cursor-position) "  "
-         (when (mood-line-segment-checker) "|") "  "
-         (mood-line-segment-checker) "  "
-         " ")))
+      (mood-line-defformat
+       ;; Left side
+       (" "
+        ((mood-line-segment-buffer-status) . " ")
+        ((mood-line-segment-buffer-name)   . " : ")
+        (mood-line-segment-major-mode))
+       ;; Right side
+       (((mood-line-segment-scroll)             . " ")
+        ((mood-line-segment-cursor-position)    . "  ")
+        ((when (mood-line-segment-checker) "|") . "  ")
+        ((mood-line-segment-checker)            . "  ")
+        " ")))
 ```
 
-More information on the format specification is available in the documentation.
-(`M-x describe-variable mood-line-format`)
+More information on the format specification is available in the documentation: \
+`M-x describe-variable mood-line-format` \
+`M-x describe-function mood-line-defformat`
 
 ### Glyphs
 
