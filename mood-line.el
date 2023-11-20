@@ -397,6 +397,20 @@ See `mood-line-defformat' for a helpful formatting macro."
 ;;
 ;; -------------------------------------------------------------------------- ;;
 
+(defvar mood-line--escape-buffer (get-buffer-create " *mood-line*" t)
+  "Buffer used by `mood-line--escape'.")
+
+(defun mood-line--escape (&rest strings)
+  "Escape all mode line constructs in STRINGS."
+  (with-current-buffer mood-line--escape-buffer
+    (erase-buffer)
+    (apply #'insert strings)
+    (while (search-backward "%" nil t)
+      (goto-char (match-beginning 0))
+      (insert-char ?% 1 t)
+      (goto-char (- (point) 1)))
+    (buffer-string)))
+
 (defun mood-line--get-glyph (glyph)
   "Return character from `mood-line-glyph-alist' for GLYPH.
 If a character could not be found for the requested glyph, a fallback will be
@@ -418,14 +432,14 @@ for `mood-line-format', which see."
 Returned string is padded in the center to fit the width of the window.
 Left and right segment lists of FORMAT will be processed according to the rules
 described in the documentation for `mood-line-format', which see."
-  (let ((left-str (mood-line--process-segments (car format)))
-        (right-str (mood-line--process-segments (cadr format))))
-    (concat left-str
-            " "
-            (propertize " "
-                        'display `((space :align-to (- right (- 0 right-margin)
-                                                       ,(length right-str)))))
-            right-str)))
+  (let ((right-str (mood-line--process-segments (cadr format))))
+    (mood-line--escape
+     (mood-line--process-segments (car format))
+     " "
+     (propertize " "
+                 'display `((space :align-to (- right (- 0 right-margin)
+                                                ,(length right-str)))))
+     right-str)))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
@@ -609,7 +623,7 @@ Modal modes checked, in order: `evil-mode', `meow-mode', `god-mode'."
 
 (defun mood-line-segment-scroll ()
   "Return the relative position of the viewport in the current buffer."
-  (format-mode-line "%o%%" 'mood-line-unimportant))
+  (format-mode-line "%o" 'mood-line-unimportant))
 
 ;; ---------------------------------- ;;
 ;; EOL segment
