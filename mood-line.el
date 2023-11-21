@@ -92,8 +92,8 @@ If NAME is already bound, this does nothing."
        (require (quote ,module))
        (apply (function ,name) args))))
 
-(defmacro mood-line-defformat (left &optional right)
-  "Format LEFT and RIGHT segment lists as a `mood-line-format' sequence.
+(defmacro mood-line-defformat (&rest spec)
+  "Format :left and :right segment lists of plist SPEC for `mood-line-format'.
 
 A segment may be a string, a cons cell of the form (FUNCTION . SEPARATOR),
  or any expression that evaluates to a string or nil.
@@ -105,14 +105,22 @@ Cons cells of the form (FUNCTION . SEPARATOR) will expand into the format
 
 All other expressions will expand into the format sequence unaltered,
  followed by an empty string. This prevents accidental elision of the
- following segment should the expression evaluate to nil."
-  `(quote ,(mapcar
-            (lambda (segments)
-              (cl-loop for seg in segments
-                       if (cdr-safe seg) append `(,(car seg) ,(cdr seg))
-                       else if (stringp seg) collect seg
-                       else append `(,seg "")))
-            `(,left ,right))))
+ following segment should the expression evaluate to nil.
+
+An optional key :padding may be provided, the value of which will be used as
+ the padding for either side of the mode line. If :padding is nil, \"\s\" will
+ be used as a default."
+  (let* ((padding (or (plist-get spec :padding) "\s"))
+         (left (append (list padding) (plist-get spec :left)))
+         (right (append (plist-get spec :right) (list padding))))
+    `(quote ,(mapcar
+              (lambda (segments)
+                (cl-loop for seg in segments
+                         if (nlistp (cdr-safe seg)) append (list (car seg)
+                                                                 (cdr seg))
+                         else if (stringp seg) collect seg
+                         else append (list seg "")))
+              (list left right)))))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
@@ -185,29 +193,26 @@ All other expressions will expand into the format sequence unaltered,
 
 (defconst mood-line-format-default
   (mood-line-defformat
-   ;; Left
-   (" "
-    ((mood-line-segment-modal)            . " ")
+   :left
+   (((mood-line-segment-modal)            . " ")
     ((mood-line-segment-buffer-status)    . " ")
     ((mood-line-segment-buffer-name)      . "  ")
     ((mood-line-segment-anzu)             . "  ")
     ((mood-line-segment-multiple-cursors) . "  ")
     ((mood-line-segment-cursor-position)  . " ")
     (mood-line-segment-scroll))
-   ;; Right
+   :right
    (((mood-line-segment-vc)         . "  ")
     ((mood-line-segment-major-mode) . "  ")
     ((mood-line-segment-misc-info)  . "  ")
     ((mood-line-segment-checker)    . "  ")
-    ((mood-line-segment-process)    . "  ")
-    " "))
+    ((mood-line-segment-process)    . "  ")))
   "Default format for mood-line.")
 
 (defconst mood-line-format-default-extended
   (mood-line-defformat
-   ;; Left
-   (" "
-    ((mood-line-segment-modal)            . " ")
+   :left
+   (((mood-line-segment-modal)            . " ")
     ((mood-line-segment-buffer-status)    . " ")
     ((mood-line-segment-buffer-name)      . "  ")
     ((mood-line-segment-anzu)             . "  ")
@@ -217,7 +222,7 @@ All other expressions will expand into the format sequence unaltered,
     ((mood-line-segment-cursor-point)     . " ")
     ((mood-line-segment-region)           . " ")
     (mood-line-segment-scroll))
-   ;; Right
+   :right
    (((mood-line-segment-indentation) . "  ")
     ((mood-line-segment-eol)         . "  ")
     ((mood-line-segment-encoding)    . "  ")
@@ -225,8 +230,7 @@ All other expressions will expand into the format sequence unaltered,
     ((mood-line-segment-major-mode)  . "  ")
     ((mood-line-segment-misc-info)   . "  ")
     ((mood-line-segment-checker)     . "  ")
-    ((mood-line-segment-process)     . "  ")
-    " "))
+    ((mood-line-segment-process)     . "  ")))
   "Extended default format for mood-line showcasing all included segments.")
 
 ;; -------------------------------------------------------------------------- ;;
