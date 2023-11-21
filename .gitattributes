@@ -1,2 +1,5 @@
 # Repository assets (screenshots, etc.)
 .repo-assets/** filter=lfs diff=lfs merge=lfs -text
+
+# Ignore plaintext assets
+.repo-assets/**/*.md filter= diff= merge= text
