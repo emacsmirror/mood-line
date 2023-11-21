@@ -1,3 +1,20 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7bb22f786b2a5e3f01d1c784b320f6451bf093ceb049d9b45f7c283344635495
-size 670
+```lisp
+;; Emacs 29 with native compilation, default GC threshold
+;; Run in a lisp-interaction buffer with Flymake
+
+(defun time-mode-line (num &optional and-mem)
+  (let ((gc-cons-threshold (if and-mem gc-cons-threshold most-positive-fixnum))
+        (start-time (current-time)))
+    (cl-loop for i to num
+             do (format-mode-line mode-line-format))
+    (format-time-string "%s.%3N" (time-since start-time))))
+
+;; Default mode line:
+(time-mode-line 10000)          ;; "0.440"
+(time-mode-line 10000 :and-mem) ;; "2.402"
+
+;; mood-line (default settings):
+(mood-line-mode t)
+(time-mode-line 10000)          ;; "0.309"
+(time-mode-line 10000 :and-mem) ;; "1.286"
+```
