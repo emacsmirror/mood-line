@@ -1,6 +1,6 @@
 ```lisp
 ;; Emacs 29 with native compilation, default GC threshold
-;; Run in a lisp-interaction buffer with Flymake
+;; Run in a lisp-interaction-mode buffer with Flymake
 
 (defun time-mode-line (num &optional and-mem)
   (let ((gc-cons-threshold (if and-mem gc-cons-threshold most-positive-fixnum))
