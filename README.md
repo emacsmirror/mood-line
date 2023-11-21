@@ -17,7 +17,7 @@ mood-line is a lightweight, drop-in replacement for the default Emacs mode line 
 
 * Lazy-loaded extensions
 
-* [Lightweight](./repo-assets/benchmark.md), no dependencies
+* [Lightweight](.repo-assets/benchmark.md), no dependencies
 
 ## Preview
 
