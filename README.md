@@ -82,7 +82,7 @@ If you'd like to see prettier Unicode glyphs, you can change the value of `mood-
 
 ```elisp
 ;; The default set of glyphs:
-;;   * myModifiedFile.js  Replace*3                 + main  Javascript  ! Issues: 2
+;;   * myModifiedFile.js  Replace*3                 + main  JavaScript  ! Issues: 2
 (setq mood-line-glyph-alist mood-line-glyphs-ascii)
 
 ;; A set of Fira Code-compatible Unicode glyphs:
