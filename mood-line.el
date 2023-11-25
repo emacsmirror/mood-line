@@ -52,7 +52,7 @@
 ;; -------------------------------------------------------------------------- ;;
 
 ;; ---------------------------------- ;;
-;; Compile time requirements
+;; Required features
 ;; ---------------------------------- ;;
 
 (eval-when-compile
@@ -62,18 +62,19 @@
 ;; External variable defs
 ;; ---------------------------------- ;;
 
-(defvar anzu--cached-count)
-(defvar anzu--current-position)
-(defvar anzu--overflow-p)
-(defvar anzu--total-matched)
+(eval-when-compile
+  (defvar anzu--cached-count)
+  (defvar anzu--current-position)
+  (defvar anzu--overflow-p)
+  (defvar anzu--total-matched))
 
 ;; ---------------------------------- ;;
 ;; External function decls
 ;; ---------------------------------- ;;
 
-(declare-function mc/num-cursors "multiple-cursors")
-
-(declare-function string-blank-p "subr-x")
+(eval-when-compile
+  (declare-function mc/num-cursors "multiple-cursors")
+  (declare-function string-blank-p "subr-x"))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;

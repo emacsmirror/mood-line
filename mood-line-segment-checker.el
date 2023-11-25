@@ -35,7 +35,7 @@
 ;; -------------------------------------------------------------------------- ;;
 
 ;; ---------------------------------- ;;
-;; Compile time requirements
+;; Required features
 ;; ---------------------------------- ;;
 
 (eval-when-compile
@@ -45,19 +45,19 @@
 ;; External variable defs
 ;; ---------------------------------- ;;
 
-(defvar flycheck-current-errors)
+(eval-when-compile
+  (defvar flycheck-current-errors))
 
 ;; ---------------------------------- ;;
 ;; External function decls
 ;; ---------------------------------- ;;
 
-(declare-function mood-line--get-glyph "mood-line")
-
-(declare-function flycheck-count-errors "flycheck")
-
-(declare-function flymake-running-backends "flymake")
-(declare-function flymake-reporting-backends "flymake")
-(declare-function flymake--lookup-type-property "flymake")
+(eval-when-compile
+  (declare-function mood-line--get-glyph "mood-line")
+  (declare-function flycheck-count-errors "flycheck")
+  (declare-function flymake-running-backends "flymake")
+  (declare-function flymake-reporting-backends "flymake")
+  (declare-function flymake--lookup-type-property "flymake"))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;

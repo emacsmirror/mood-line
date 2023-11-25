@@ -38,7 +38,8 @@
 ;; External function decls
 ;; ---------------------------------- ;;
 
-(declare-function mood-line--get-glyph "mood-line")
+(eval-when-compile
+  (declare-function mood-line--get-glyph "mood-line"))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
