@@ -112,7 +112,7 @@ To run the included tests:
 ## Feedback
 
 If you experience any issues with this package, please
-[open an issue](https://gitlab.com/jessieh/mood-line/issues/new)
+[open an issue](https://git.tty.dog/jessieh/mood-line/issues/new)
 on the issue tracker.
 
 Suggestions for improvements and feature requests are always appreciated, as well!
