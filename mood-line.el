@@ -401,7 +401,7 @@ See `mood-line-defformat' for a helpful formatting macro."
 ;;
 ;; -------------------------------------------------------------------------- ;;
 
-(defvar mood-line--escape-buffer (get-buffer-create " *mood-line*" t)
+(defvar mood-line--escape-buffer (get-buffer-create " *mood-line*")
   "Buffer used by `mood-line--escape'.")
 
 (defun mood-line--escape (&rest strings)
