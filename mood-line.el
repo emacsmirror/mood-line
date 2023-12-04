@@ -82,10 +82,8 @@
 ;; -------------------------------------------------------------------------- ;;
 
 (defmacro mood-line--deflazy (name)
-  "Define dummy function NAME to `require' its module and call actual function.
-If NAME is already bound, this does nothing."
-  (when-let ((not-bound (not (fboundp name)))
-             (module (intern (car (split-string (symbol-name name) "--")))))
+  "Define dummy function NAME to `require' its module and call actual function."
+  (let ((module (intern (car (split-string (symbol-name name) "--")))))
     `(defun ,name (&rest args)
        "Not yet loaded."
        (fmakunbound (quote ,name))
