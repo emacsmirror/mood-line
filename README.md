@@ -1,11 +1,9 @@
-# mood-line
+# <img src=".repo-assets/icon.png" width=75> mood-line
+
+A lightweight, drop-in replacement for the default Emacs mode line configuration.
 
 [![MELPA](https://melpa.org/packages/mood-line-badge.svg)](https://melpa.org/#/mood-line)
 [![MELPA Stable](https://stable.melpa.org/packages/mood-line-badge.svg)](https://stable.melpa.org/#/mood-line)
-
-## About
-
-mood-line is a lightweight, drop-in replacement for the default Emacs mode line configuration.
 
 ## Features
 
