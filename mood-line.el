@@ -690,10 +690,6 @@ Modal modes checked, in order: `evil-mode', `meow-mode', `god-mode'."
 ;;
 ;; -------------------------------------------------------------------------- ;;
 
-;; ---------------------------------- ;;
-;; Configuration
-;; ---------------------------------- ;;
-
 (defconst mood-line--hooks-alist
   '((mood-line-segment-checker--flycheck-update
      . (flycheck-mode-hook
