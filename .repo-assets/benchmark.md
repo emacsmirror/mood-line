@@ -7,14 +7,14 @@
         (start-time (current-time)))
     (cl-loop for i to num
              do (format-mode-line mode-line-format))
-    (format-time-string "%s.%3N" (time-since start-time))))
+    (format-time-string "%s.%3N seconds" (time-since start-time))))
 
 ;; Default mode line:
-(time-mode-line 10000)          ;; "0.440"
-(time-mode-line 10000 :and-mem) ;; "2.402"
+(time-mode-line 10000)          ;; "0.440 seconds"
+(time-mode-line 10000 :and-mem) ;; "2.402 seconds"
 
 ;; mood-line (default settings):
 (mood-line-mode t)
-(time-mode-line 10000)          ;; "0.309"
-(time-mode-line 10000 :and-mem) ;; "1.286"
+(time-mode-line 10000)          ;; "0.309 seconds"
+(time-mode-line 10000 :and-mem) ;; "1.286 seconds"
 ```
