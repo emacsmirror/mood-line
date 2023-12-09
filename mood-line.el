@@ -398,15 +398,6 @@ See `mood-line-defformat' for a helpful formatting macro."
   "Face used for less important mode line elements."
   :group 'mood-line-faces)
 
-;; ---------------------------------- ;;
-;; Obsolete faces
-;; ---------------------------------- ;;
-
-(define-obsolete-face-alias
- 'mood-line-modified
- 'mood-line-buffer-status-modified
- "2.1.0")
-
 ;; -------------------------------------------------------------------------- ;;
 ;;
 ;; Helper functions
