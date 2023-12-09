@@ -1,4 +1,4 @@
-# <img src=".repo-assets/icon.png" width=75> mood-line
+# <img src=".repo-assets/icon.png" width=50> mood-line
 
 A lightweight, drop-in replacement for the default Emacs mode line configuration.
 
@@ -19,7 +19,7 @@ A lightweight, drop-in replacement for the default Emacs mode line configuration
 
 ## Preview
 
-![Preview Image](.repo-assets/preview.png "Preview Image")
+![Preview Image](.repo-assets/preview.webp "Preview Image")
 
 ## Configuration
 
