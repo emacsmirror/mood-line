@@ -460,17 +460,22 @@ described in the documentation for `mood-line-format', which see."
 
 (mood-line--deflazy mood-line-segment-modal--evil-fn)
 (mood-line--deflazy mood-line-segment-modal--meow-fn)
+(mood-line--deflazy mood-line-segment-modal--xah-fn)
 (mood-line--deflazy mood-line-segment-modal--god-fn)
 
 (defun mood-line-segment-modal ()
   "Return the correct mode line segment for the first active modal mode found.
-Modal modes checked, in order: `evil-mode', `meow-mode', `god-mode'."
+Modal editing modes checked, in order:
+`evil-mode', `meow-mode', `xah-fly-keys', `god-mode'"
   (cond
    ((bound-and-true-p evil-mode)
     (mood-line-segment-modal--evil-fn))
    ((bound-and-true-p meow-mode)
     (mood-line-segment-modal--meow-fn))
-   ((featurep 'god-mode)
+   ((bound-and-true-p xah-fly-keys)
+    (mood-line-segment-modal--xah-fn))
+   ((or (bound-and-true-p 'god-local-mode)
+        (bound-and-true-p 'god-global-mode))
     (mood-line-segment-modal--god-fn))))
 
 ;; ---------------------------------- ;;

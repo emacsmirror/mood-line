@@ -108,6 +108,16 @@ e.g., (:foreground \"red\")."
                           'face (cdr mode-cons))))))
 
 ;; ---------------------------------- ;;
+;; Xah segment
+;; ---------------------------------- ;;
+
+(defun mood-line-segment-modal--xah-fn ()
+  "Display the current xah-fly-keys state."
+  (if (bound-and-true-p xah-fly-insert-state-p)
+      "<I>"
+      "<C>"))
+
+;; ---------------------------------- ;;
 ;; God segment
 ;; ---------------------------------- ;;
 
