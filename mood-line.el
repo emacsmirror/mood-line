@@ -144,6 +144,8 @@ An optional key :padding may be provided, the value of which will be used as
     (:buffer-modified . ?*)
     (:buffer-read-only . ?#)
 
+    (:emacsclient . ?c)
+
     (:count-separator . ?*))
   "Set of ASCII glyphs for use with mood-line.")
 
@@ -165,6 +167,8 @@ An optional key :padding may be provided, the value of which will be used as
     (:buffer-modified . ?●)
     (:buffer-read-only . ?■)
 
+    (:emacsclient . ?▶)
+
     (:count-separator . ?×))
   "Set of Fira Code-compatible glyphs for use with mood-line.")
 
@@ -185,6 +189,8 @@ An optional key :padding may be provided, the value of which will be used as
     (:buffer-narrowed . ?▼)
     (:buffer-modified . ?●)
     (:buffer-read-only . ?■)
+
+    (:emacsclient . ?↹)
 
     (:count-separator . ?✕))
   "Set of Unicode glyphs for use with mood-line.")
@@ -287,6 +293,8 @@ Keys are names for different mode line glyphs, values are characters for that
  :buffer-narrowed     | File-backed buffer is narrowed
  :buffer-modified     | File-backed buffer is modified
  :buffer-read-only    | File-backed buffer is read-only
+
+ :emacsclient         | Frame is a client for an Emacs daemon
 
  :count-separator     | Separates some indicator names from numerical counts
 
@@ -503,6 +511,17 @@ Modal modes checked, in order: `evil-mode', `meow-mode', `god-mode'."
     mood-line-segment-checker--flycheck-text)
    ((bound-and-true-p flymake-mode)
     mood-line-segment-checker--flymake-text)))
+
+;; ---------------------------------- ;;
+;; Emacsclient segment function
+;; ---------------------------------- ;;
+
+(defun mood-line-segment-emacsclient ()
+  "Indicate whether or not the frame is an emacsclient."
+  (if (not (eq (format-mode-line mode-line-client) ""))
+      (format #("%s " 0 1 (face mood-line-status-info))
+              (mood-line--get-glyph :emacsclient))
+    ""))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
