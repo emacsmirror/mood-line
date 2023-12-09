@@ -144,7 +144,7 @@ An optional key :padding may be provided, the value of which will be used as
     (:buffer-modified . ?*)
     (:buffer-read-only . ?#)
 
-    (:emacsclient . ?c)
+    (:frame-client . ?@)
 
     (:count-separator . ?*))
   "Set of ASCII glyphs for use with mood-line.")
@@ -167,7 +167,7 @@ An optional key :padding may be provided, the value of which will be used as
     (:buffer-modified . ?●)
     (:buffer-read-only . ?■)
 
-    (:emacsclient . ?▶)
+    (:frame-client . ?)
 
     (:count-separator . ?×))
   "Set of Fira Code-compatible glyphs for use with mood-line.")
@@ -190,7 +190,7 @@ An optional key :padding may be provided, the value of which will be used as
     (:buffer-modified . ?●)
     (:buffer-read-only . ?■)
 
-    (:emacsclient . ?↹)
+    (:frame-client . ?⇅)
 
     (:count-separator . ?✕))
   "Set of Unicode glyphs for use with mood-line.")
@@ -198,12 +198,12 @@ An optional key :padding may be provided, the value of which will be used as
 (defconst mood-line-format-default
   (mood-line-defformat
    :left
-   (((mood-line-segment-modal)            . " ")
-    ((mood-line-segment-buffer-status)    . " ")
-    ((mood-line-segment-buffer-name)      . "  ")
-    ((mood-line-segment-anzu)             . "  ")
-    ((mood-line-segment-multiple-cursors) . "  ")
-    ((mood-line-segment-cursor-position)  . " ")
+   (((mood-line-segment-modal)                  . " ")
+    ((or (mood-line-segment-buffer-status) " ") . " ")
+    ((mood-line-segment-buffer-name)            . "  ")
+    ((mood-line-segment-anzu)                   . "  ")
+    ((mood-line-segment-multiple-cursors)       . "  ")
+    ((mood-line-segment-cursor-position)        . " ")
     (mood-line-segment-scroll))
    :right
    (((mood-line-segment-vc)         . "  ")
@@ -217,7 +217,9 @@ An optional key :padding may be provided, the value of which will be used as
   (mood-line-defformat
    :left
    (((mood-line-segment-modal)            . " ")
-    ((mood-line-segment-buffer-status)    . " ")
+    ((or (mood-line-segment-buffer-status)
+         (mood-line-segment-client)
+         " ")                             . " ")
     ((mood-line-segment-buffer-name)      . "  ")
     ((mood-line-segment-anzu)             . "  ")
     ((mood-line-segment-multiple-cursors) . "  ")
@@ -294,7 +296,7 @@ Keys are names for different mode line glyphs, values are characters for that
  :buffer-modified     | File-backed buffer is modified
  :buffer-read-only    | File-backed buffer is read-only
 
- :emacsclient         | Frame is a client for an Emacs daemon
+ :frame-client        | Frame is a client for an Emacs daemon
 
  :count-separator     | Separates some indicator names from numerical counts
 
@@ -351,6 +353,10 @@ See `mood-line-defformat' for a helpful formatting macro."
   '((t (:inherit font-lock-doc-face :weight normal)))
   "Face used for the ':buffer-narrowed' buffer status indicator."
   :group 'mood-line-faces)
+
+(defface mood-line-frame-status-client
+  '((t (:inherit shadow :weight normal)))
+  "Face used for the :frame-client frame status indicator.")
 
 (defface mood-line-major-mode
   '((t (:inherit bold)))
@@ -512,16 +518,17 @@ Modal modes checked, in order: `evil-mode', `meow-mode', `god-mode'."
    ((bound-and-true-p flymake-mode)
     mood-line-segment-checker--flymake-text)))
 
-;; ---------------------------------- ;;
-;; Emacsclient segment function
-;; ---------------------------------- ;;
+;; -------------------------------------------------------------------------- ;;
+;;
+;; Client segment
+;;
+;; -------------------------------------------------------------------------- ;;
 
-(defun mood-line-segment-emacsclient ()
-  "Indicate whether or not the frame is an emacsclient."
-  (if (not (eq (format-mode-line mode-line-client) ""))
-      (format #("%s " 0 1 (face mood-line-status-info))
-              (mood-line--get-glyph :emacsclient))
-    ""))
+(defun mood-line-segment-client ()
+  "Return an indicator representing the client status of the current frame."
+  (when (frame-parameter nil 'client)
+    (propertize (mood-line--get-glyph :frame-client)
+                'face 'mood-line-frame-status-client)))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
@@ -592,12 +599,10 @@ Modal modes checked, in order: `evil-mode', `meow-mode', `god-mode'."
                     'face 'mood-line-buffer-status-modified))
        (buffer-read-only
         (propertize (mood-line--get-glyph :buffer-read-only)
-                    'face 'mood-line-buffer-status-read-only))
-       (t " "))
-    (if (buffer-narrowed-p)
-        (propertize (mood-line--get-glyph :buffer-narrowed)
-                    'face 'mood-line-buffer-status-narrowed)
-      " ")))
+                    'face 'mood-line-buffer-status-read-only)))
+    (when (buffer-narrowed-p)
+      (propertize (mood-line--get-glyph :buffer-narrowed)
+                  'face 'mood-line-buffer-status-narrowed))))
 
 ;; ---------------------------------- ;;
 ;; Buffer name segment
