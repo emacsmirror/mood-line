@@ -69,8 +69,8 @@ mood-line uses a modular segment format, and it is easy to reconfigure:
         ((mood-line-segment-checker)            . "  "))))
 ```
 
-More information on the format specification is available in the documentation: \
-`M-x describe-variable mood-line-format` \
+More information on the format specification is available in the documentation:\
+`M-x describe-variable mood-line-format`\
 `M-x describe-function mood-line-defformat`
 
 ### Glyphs
