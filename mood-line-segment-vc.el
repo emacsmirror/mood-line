@@ -49,8 +49,11 @@
 
 (defun mood-line-segment-vc--rev (vc-mode-str backend)
   "Return name of current file's revision for BACKEND according to `vc-mode'.
-VC-MODE-STR is expected to be the value of `vc-mode' in the current buffer."
-  (or (pcase backend
+VC-MODE-STR is expected to be the value of `vc-mode' in the current buffer.
+If `vc-display-status' is nil, return the name of BACKEND."
+  (or (unless vc-display-status
+        (symbol-name backend))
+      (pcase backend
         ('Git (substring-no-properties vc-mode-str 5))
         ('Hg (substring-no-properties vc-mode-str 4)))
       (ignore-errors
