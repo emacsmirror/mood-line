@@ -34,4 +34,12 @@
     (should (string= (mood-line-segment-vc--rev "" 'SVN)
                      "???"))))
 
+(ert-deftest --rev/vc-display-status-nil ()
+  "Name of the VCS backend should be reported when `vc-display-status' is nil."
+  (let ((vc-display-status nil))
+    (should (string= (mood-line-segment-vc--rev " Git:main" 'Git)
+                     "Git"))
+    (should (string= (mood-line-segment-vc--rev " Hg:main" 'Hg)
+                     "Hg"))))
+
 ;;; mood-line-segment-vc-test.el ends here
