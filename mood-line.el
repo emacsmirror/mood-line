@@ -356,7 +356,7 @@ See `mood-line-defformat' for a helpful formatting macro."
   :group 'mood-line-faces)
 
 (defface mood-line-frame-status-client
-  '((t (:inherit shadow :weight normal)))
+  '((t (:inherit mood-line-unimportant)))
   "Face used for the :frame-client frame status indicator.")
 
 (defface mood-line-major-mode
