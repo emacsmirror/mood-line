@@ -474,8 +474,8 @@ Modal editing modes checked, in order:
     (mood-line-segment-modal--meow-fn))
    ((bound-and-true-p xah-fly-keys)
     (mood-line-segment-modal--xah-fn))
-   ((or (bound-and-true-p 'god-local-mode)
-        (bound-and-true-p 'god-global-mode))
+   ((or (bound-and-true-p god-local-mode)
+        (bound-and-true-p god-global-mode))
     (mood-line-segment-modal--god-fn))))
 
 ;; ---------------------------------- ;;
