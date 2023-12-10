@@ -148,7 +148,7 @@
     (should (string= segments-str "ABC123XYZ"))))
 
 ;; ---------------------------------- ;;
-;; mood-line---process-format
+;; mood-line--process-format
 ;; ---------------------------------- ;;
 
 (ert-deftest --process-format/default ()
