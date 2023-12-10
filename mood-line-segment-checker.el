@@ -2,7 +2,7 @@
 ;;
 ;; Author: Jessie Hildebrandt <jessieh.net>
 ;; Homepage: https://gitlab.com/jessieh/mood-line
-
+;;
 ;; This file is not part of GNU Emacs.
 
 ;;; Commentary:
