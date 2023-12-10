@@ -220,6 +220,7 @@ An optional key :padding may be provided, the value of which will be used as
     ((or (mood-line-segment-buffer-status)
          (mood-line-segment-client)
          " ")                             . " ")
+    ((mood-line-segment-project)          . "/")
     ((mood-line-segment-buffer-name)      . "  ")
     ((mood-line-segment-anzu)             . "  ")
     ((mood-line-segment-multiple-cursors) . "  ")
@@ -525,6 +526,21 @@ Modal editing modes checked, in order:
   (when (frame-parameter nil 'client)
     (propertize (mood-line--get-glyph :frame-client)
                 'face 'mood-line-frame-status-client)))
+
+;; -------------------------------------------------------------------------- ;;
+;;
+;; Project segment
+;;
+;; -------------------------------------------------------------------------- ;;
+
+(defun mood-line-segment-project ()
+  "Return project name from project.el or Projectile, if any."
+  (or
+   (and (fboundp 'project-name)
+        (project-current)
+        (project-name (project-current)))
+   (and (fboundp 'projectile-project-name)
+        (projectile-project-name))))
 
 ;; -------------------------------------------------------------------------- ;;
 ;;
